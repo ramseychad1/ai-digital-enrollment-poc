@@ -3,7 +3,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "./mvnw spring-boot:run",
+    "startCommand": "java -jar target/ai-digital-enrollment-1.0.0-SNAPSHOT.jar",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 100
   }
