@@ -28,25 +28,34 @@ Both services are configured to deploy as separate Railway services using the mo
 
 1. Log in to [Railway](https://railway.app)
 2. Click **"New Project"**
-3. Select **"Deploy from GitHub repo"**
-4. Authorize Railway to access your GitHub account
-5. Select this repository
-6. Railway will automatically detect the monorepo structure via `railway.toml`
+3. Select **"Empty Project"** (we'll add services manually)
+4. Give your project a name (e.g., "AI Digital Enrollment")
 
 ---
 
 ## Step 2: Deploy Backend Service
 
-### 2.1 Configure Backend Service
+### 2.1 Create Backend Service
 
-Railway should automatically create a service for the backend based on `railway.toml`.
+1. In your Railway project, click **"+ New"**
+2. Select **"GitHub Repo"**
+3. Authorize Railway to access your GitHub account if not already done
+4. Select your repository: `ai-digital-enrollment-poc`
+5. Railway will create a service and attempt to build
 
-1. Go to your Railway project
-2. Select the **backend** service
-3. Go to **Settings** tab
-4. Under **Source**, verify the **Root Directory** is set to `backend`
+### 2.2 Configure Backend Root Directory
 
-### 2.2 Set Backend Environment Variables
+**IMPORTANT**: You must configure the root directory for the backend service.
+
+1. Click on the newly created service
+2. Go to **Settings** tab
+3. Scroll down to **Source** section
+4. Click **"Configure"** or the edit icon
+5. Set **Root Directory** to: `backend`
+6. Click **"Save"**
+7. The service will automatically redeploy with the correct directory
+
+### 2.3 Set Backend Environment Variables
 
 Go to the **Variables** tab and add the following environment variables:
 
@@ -82,23 +91,43 @@ CORS_ALLOWED_ORIGINS=https://your-frontend-name.up.railway.app
 
 **Note**: You'll need to update `CORS_ALLOWED_ORIGINS` after the frontend is deployed (Step 3).
 
-### 2.3 Deploy Backend
+### 2.4 Generate Public Domain for Backend
 
-1. Railway will automatically deploy after setting environment variables
+1. In the backend service, go to **Settings** tab
+2. Scroll to **Networking** section
+3. Click **"Generate Domain"** to create a public URL
+4. Note the generated domain (e.g., `https://backend-production-xxxx.up.railway.app`)
+
+### 2.5 Deploy Backend
+
+1. Railway will automatically deploy after setting environment variables and root directory
 2. Wait for deployment to complete (check **Deployments** tab)
-3. Once deployed, note the **public domain** (e.g., `https://backend-production-xxxx.up.railway.app`)
-4. Test the health endpoint: `https://your-backend-domain/api/health`
+3. Monitor the build logs for any errors
+4. Once deployed, test the health endpoint: `https://your-backend-domain/api/health`
 
 ---
 
 ## Step 3: Deploy Frontend Service
 
-### 3.1 Configure Frontend Service
+### 3.1 Create Frontend Service
 
-1. Go to your Railway project
-2. Select the **frontend** service
+1. In your Railway project, click **"+ New"** again
+2. Select **"GitHub Repo"**
+3. Select the same repository: `ai-digital-enrollment-poc`
+4. Railway will create a second service
+
+### 3.2 Configure Frontend Root Directory
+
+**IMPORTANT**: You must configure the root directory for the frontend service.
+
+1. Click on the newly created frontend service
+2. Rename it to "frontend" for clarity (click the service name at top)
 3. Go to **Settings** tab
-4. Under **Source**, verify the **Root Directory** is set to `frontend`
+4. Scroll down to **Source** section
+5. Click **"Configure"** or the edit icon
+6. Set **Root Directory** to: `frontend`
+7. Click **"Save"**
+8. The service will automatically redeploy with the correct directory
 
 ### 3.2 Update Frontend Environment Configuration
 
@@ -131,12 +160,19 @@ Then update `frontend/src/index.html` to inject this at runtime:
 </script>
 ```
 
-### 3.4 Deploy Frontend
+### 3.4 Generate Public Domain for Frontend
+
+1. In the frontend service, go to **Settings** tab
+2. Scroll to **Networking** section
+3. Click **"Generate Domain"** to create a public URL
+4. Note the generated domain (e.g., `https://frontend-production-xxxx.up.railway.app`)
+
+### 3.5 Deploy Frontend
 
 1. Railway will automatically deploy after configuration
 2. Wait for deployment to complete
-3. Once deployed, note the **public domain** (e.g., `https://frontend-production-xxxx.up.railway.app`)
-4. Open the URL in your browser to verify the application loads
+3. Monitor the build logs for any errors
+4. Once deployed, open the URL in your browser to verify the application loads
 
 ---
 
