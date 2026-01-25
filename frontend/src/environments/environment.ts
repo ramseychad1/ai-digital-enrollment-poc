@@ -33,9 +33,8 @@ function getApiUrl(): string {
       return backendUrl;
     }
 
-    // Option 2: Default Railway backend URL (you can set this after deployment)
-    // Replace with your actual Railway backend URL
-    return 'https://your-backend-name.up.railway.app/api';
+    // Option 2: Default Railway backend URL
+    return 'https://ai-digital-enrollment-poc-production.up.railway.app/api';
   }
 
   // Default to localhost for local development

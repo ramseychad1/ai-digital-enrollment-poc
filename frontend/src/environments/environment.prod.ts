@@ -18,11 +18,10 @@ function getApiUrl(): string {
     return railwayBackendUrl;
   }
 
-  // If running on Railway, you'll need to manually set this
-  // after both services are deployed
+  // If running on Railway, use the deployed backend URL
   const hostname = window.location.hostname;
   if (hostname.includes('railway.app')) {
-    return 'https://your-backend-name.up.railway.app/api';
+    return 'https://ai-digital-enrollment-poc-production.up.railway.app/api';
   }
 
   // Fallback
