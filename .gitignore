@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Artifacts/temporary files
+artifacts/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment variables and credentials
+start.sh

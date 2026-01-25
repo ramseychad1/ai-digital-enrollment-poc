@@ -1,0 +1,88 @@
+<app-header></app-header>
+
+<main class="form-renderer">
+  <div class="container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading">
+      <p>Loading enrollment form...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="error-container">
+      <p class="error-text">{{ errorMessage }}</p>
+      <button class="btn-primary" (click)="goBack()">Back to Program</button>
+    </div>
+
+    <!-- Form -->
+    <div *ngIf="!isLoading && !errorMessage && formSchema" class="form-container">
+      <div class="form-header">
+        <h1>{{ formSchema.title }}</h1>
+        <p *ngIf="formSchema.description">{{ formSchema.description }}</p>
+        <div class="progress-indicator" *ngIf="totalPages > 1">
+          <span>Page {{ currentPageIndex + 1 }} of {{ totalPages }}</span>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="((currentPageIndex + 1) / totalPages) * 100"></div>
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+        <!-- Current Page -->
+        <div *ngIf="currentPage" class="form-page">
+          <h2 class="page-title">{{ currentPage.title }}</h2>
+
+          <!-- Sections -->
+          <div class="form-section" *ngFor="let section of currentPage.sections">
+            <h3 class="section-title" *ngIf="section.title">{{ section.title }}</h3>
+            <p class="section-description" *ngIf="section.description">{{ section.description }}</p>
+
+            <!-- Rows -->
+            <div class="form-row" *ngFor="let row of section.layout">
+              <!-- Columns -->
+              <div class="form-column"
+                   *ngFor="let column of row.columns"
+                   [style.width]="column.width">
+                <!-- Fields in Column -->
+                <app-field-renderer
+                  *ngFor="let fieldName of column.fields"
+                  [fieldName]="fieldName"
+                  [fieldDefinition]="formSchema.properties[fieldName]"
+                  [formGroup]="formGroup">
+                </app-field-renderer>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Error -->
+        <div *ngIf="submitError" class="error-message-box">
+          {{ submitError }}
+        </div>
+
+        <!-- Form Navigation -->
+        <div class="form-actions">
+          <button type="button"
+                  class="btn-secondary"
+                  *ngIf="!isFirstPage"
+                  (click)="previousPage()">
+            ← Previous
+          </button>
+          <button type="button"
+                  class="btn-primary"
+                  *ngIf="!isLastPage"
+                  (click)="nextPage()">
+            Next →
+          </button>
+          <button type="submit"
+                  class="btn-primary"
+                  *ngIf="isLastPage"
+                  [disabled]="isSubmitting">
+            {{ isSubmitting ? 'Submitting...' : 'Submit Enrollment' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

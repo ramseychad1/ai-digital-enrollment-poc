@@ -1,0 +1,270 @@
+<div class="form-builder-container">
+  <app-header></app-header>
+
+  <main class="form-builder-main">
+    <div class="container">
+      <!-- Progress Stepper -->
+      <div class="stepper">
+        <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+          <div class="step-number">1</div>
+          <div class="step-label">Upload PDF</div>
+        </div>
+        <div class="step-line" [class.completed]="currentStep > 1"></div>
+        <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+          <div class="step-number">2</div>
+          <div class="step-label">Review Schema</div>
+        </div>
+        <div class="step-line" [class.completed]="currentStep > 2"></div>
+        <div class="step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3">
+          <div class="step-number">3</div>
+          <div class="step-label">Configure</div>
+        </div>
+        <div class="step-line" [class.completed]="currentStep > 3"></div>
+        <div class="step" [class.active]="currentStep >= 4">
+          <div class="step-number">4</div>
+          <div class="step-label">Publish</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Upload PDF -->
+      <div class="step-content" *ngIf="currentStep === 1">
+        <h1>{{ isEditPdfMode ? 'Upload New Enrollment Form PDF' : 'Upload Enrollment Form PDF' }}</h1>
+        <p class="subtitle">{{ isEditPdfMode ? 'Upload a new PDF to replace the existing enrollment form' : 'Upload a PDF to automatically generate an enrollment form' }}</p>
+
+        <div class="upload-section">
+          <div class="upload-box">
+            <input type="file" id="pdfUpload" accept="application/pdf" (change)="onFileSelected($event)" style="display: none" />
+            <label for="pdfUpload" class="upload-label">
+              <div class="upload-icon">📄</div>
+              <p *ngIf="!selectedFile">Click to upload PDF</p>
+              <p *ngIf="selectedFile" class="file-name">{{ selectedFile.name }}</p>
+            </label>
+          </div>
+
+          <button class="btn-primary" [disabled]="!selectedFile || isAnalyzing" (click)="analyzePdf()">
+            <span *ngIf="!isAnalyzing">Analyze with AI</span>
+            <span *ngIf="isAnalyzing">Analyzing... ⏳</span>
+          </button>
+
+          <button class="btn-primary" [disabled]="!canProceedToStep2()" (click)="nextStep()">
+            Next →
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Review Schema -->
+      <div class="step-content" *ngIf="currentStep === 2">
+        <h1>Review Generated Schema</h1>
+        <p class="subtitle">Review and edit the JSON schema if needed</p>
+
+        <div class="results-grid">
+          <!-- PDF Preview -->
+          <div class="pdf-preview">
+            <h3>Original PDF</h3>
+            <iframe *ngIf="pdfPreviewUrl" [src]="pdfPreviewUrl" class="pdf-frame"></iframe>
+          </div>
+
+          <!-- JSON Editor -->
+          <div class="json-editor">
+            <div class="json-editor-header">
+              <h3>JSON Schema</h3>
+              <button class="btn-modify" (click)="openSchemaEditor()" title="Open visual editor to modify form fields">
+                ✏️ Modify Form
+              </button>
+            </div>
+            <textarea [(ngModel)]="generatedSchema" class="schema-textarea" spellcheck="false"></textarea>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn-secondary" (click)="previousStep()">← Back</button>
+          <button class="btn-primary" (click)="nextStep()">Next →</button>
+        </div>
+      </div>
+
+      <!-- Visual Schema Editor Modal -->
+      <app-form-schema-editor
+        *ngIf="showSchemaEditor"
+        [schemaJson]="generatedSchema || ''"
+        (save)="onSchemaEditorSave($event)"
+        (cancel)="closeSchemaEditor()">
+      </app-form-schema-editor>
+
+      <!-- Step 3: Configure Program -->
+      <div class="step-content" *ngIf="currentStep === 3">
+        <h1>{{ (isEditMode || isEditPdfMode) ? 'Edit Program Configuration' : 'Configure Enrollment Program' }}</h1>
+
+        <!-- Loading state for edit mode -->
+        <div *ngIf="isLoadingProgram" class="loading-section">
+          <p>Loading program data...</p>
+        </div>
+
+        <div *ngIf="!isLoadingProgram">
+
+        <div class="config-form">
+          <div class="form-section">
+            <h3>Basic Information</h3>
+
+            <div class="form-field">
+              <label>Display Name *</label>
+              <input type="text" [(ngModel)]="programConfig.displayName" placeholder="e.g., Kisunla E2E POC" />
+              <p class="help-text">The name shown on the program selector card</p>
+            </div>
+
+            <div class="form-field">
+              <label>Manufacturer *</label>
+              <input type="text" [(ngModel)]="programConfig.manufacturer" placeholder="e.g., Lilly" />
+              <p class="help-text">The pharmaceutical company</p>
+            </div>
+
+            <div class="form-field">
+              <label>Short Description *</label>
+              <textarea [(ngModel)]="programConfig.shortDescription" rows="3" placeholder="e.g., Lilly Support Services for Kisunla"></textarea>
+              <p class="help-text">Brief description shown on program card</p>
+            </div>
+
+            <div class="form-field">
+              <label>Logo URL</label>
+              <input type="url" [(ngModel)]="programConfig.logoUrl" placeholder="https://example.com/logo.svg" />
+              <img *ngIf="programConfig.logoUrl" [src]="programConfig.logoUrl" class="logo-preview" alt="Logo preview" />
+              <p class="help-text">Direct URL to company/product logo image</p>
+            </div>
+          </div>
+
+          <!-- Form Schema Section (Edit Mode Only) -->
+          <div class="form-section" *ngIf="isEditMode && generatedSchema">
+            <h3>Form Schema</h3>
+            <p class="help-text">Modify the enrollment form fields and structure</p>
+
+            <div class="form-schema-info">
+              <div class="schema-status">
+                <span class="status-icon">📋</span>
+                <div class="status-details">
+                  <p class="status-label">Current Form Schema</p>
+                  <p class="status-value">{{ formId }}</p>
+                </div>
+              </div>
+              <button class="btn-modify-form" (click)="openSchemaEditor()" title="Open visual editor to modify form fields">
+                ✏️ Modify Form
+              </button>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>Branding & Colors</h3>
+
+            <!-- Color Zone Configurator Component -->
+            <app-color-zone-configurator
+              [websiteUrl]="programConfig.websiteUrl || ''"
+              [programConfig]="programConfig"
+              (configChange)="onColorConfigChange($event)"
+              (analyzeRequest)="onAnalyzeColors($event)"
+              (analyzePdfRequest)="onAnalyzePdfColors($event)">
+            </app-color-zone-configurator>
+          </div>
+
+          <div class="form-section">
+            <h3>Footer & Contact</h3>
+
+            <div class="form-field">
+              <label>Company Name (for header) *</label>
+              <input type="text" [(ngModel)]="programConfig.companyName" placeholder="e.g., Lilly Support Services" />
+            </div>
+
+            <div class="form-field">
+              <label>Footer Text</label>
+              <textarea [(ngModel)]="programConfig.footerText" rows="2" placeholder="© 2026 Lilly. All rights reserved."></textarea>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div class="step-actions">
+          <button *ngIf="!isEditMode || isEditPdfMode" class="btn-secondary" (click)="previousStep()">← Back</button>
+          <button *ngIf="isEditMode && !isEditPdfMode" class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+          <button class="btn-primary" [disabled]="!canProceedToStep4()" (click)="nextStep()">Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Preview & Publish/Update -->
+      <div class="step-content" *ngIf="currentStep === 4">
+        <h1>{{ (isEditMode || isEditPdfMode) ? 'Preview & Update' : 'Preview & Publish' }}</h1>
+
+        <div class="preview-section">
+          <h3>Program Card Preview</h3>
+          <div class="program-card-preview">
+            <img *ngIf="programConfig.logoUrl" [src]="programConfig.logoUrl" alt="Logo" />
+            <h2>{{ programConfig.displayName }}</h2>
+            <p class="manufacturer">{{ programConfig.manufacturer }}</p>
+            <p class="description">{{ programConfig.shortDescription }}</p>
+            <button [style.background-color]="programConfig.primaryColor">Enroll Now →</button>
+          </div>
+        </div>
+
+        <div class="publish-section">
+          <!-- Update button for edit mode (with or without schema changes) -->
+          <button
+            *ngIf="isEditMode && !isEditPdfMode && generatedSchema"
+            class="btn-primary btn-large"
+            [disabled]="isPublishing || publishSuccess"
+            (click)="updateProgramWithSchema()">
+            <span *ngIf="!isPublishing && !publishSuccess">Save Changes</span>
+            <span *ngIf="isPublishing">Updating...</span>
+            <span *ngIf="publishSuccess">Updated!</span>
+          </button>
+
+          <!-- Update button for edit mode (config only, no schema) -->
+          <button
+            *ngIf="isEditMode && !isEditPdfMode && !generatedSchema"
+            class="btn-primary btn-large"
+            [disabled]="isPublishing || publishSuccess"
+            (click)="updateProgram()">
+            <span *ngIf="!isPublishing && !publishSuccess">Save Changes</span>
+            <span *ngIf="isPublishing">Updating...</span>
+            <span *ngIf="publishSuccess">Updated!</span>
+          </button>
+
+          <!-- Update button for edit-pdf mode (with new schema) -->
+          <button
+            *ngIf="isEditPdfMode"
+            class="btn-primary btn-large"
+            [disabled]="isPublishing || publishSuccess"
+            (click)="updateProgramWithSchema()">
+            <span *ngIf="!isPublishing && !publishSuccess">Update with New Form</span>
+            <span *ngIf="isPublishing">Updating...</span>
+            <span *ngIf="publishSuccess">Updated!</span>
+          </button>
+
+          <!-- Publish button for create mode -->
+          <button
+            *ngIf="!isEditMode && !isEditPdfMode"
+            class="btn-primary btn-large"
+            [disabled]="isPublishing || publishSuccess"
+            (click)="publishToContentful()">
+            <span *ngIf="!isPublishing && !publishSuccess">Publish to Contentful</span>
+            <span *ngIf="isPublishing">Publishing...</span>
+            <span *ngIf="publishSuccess">Published!</span>
+          </button>
+
+          <p *ngIf="publishMessage" [class.success]="publishSuccess" [class.error]="!publishSuccess">
+            {{ publishMessage }}
+          </p>
+
+          <p *ngIf="publishSuccess && !isEditMode && !isEditPdfMode" class="redirect-message">
+            Redirecting to enrollment portal...
+          </p>
+          <p *ngIf="publishSuccess && (isEditMode || isEditPdfMode)" class="redirect-message">
+            Redirecting to program list...
+          </p>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn-secondary" (click)="previousStep()" [disabled]="isPublishing">← Back</button>
+          <button *ngIf="isEditMode || isEditPdfMode" class="btn-secondary" (click)="cancelEdit()" [disabled]="isPublishing">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <app-footer></app-footer>
+</div>

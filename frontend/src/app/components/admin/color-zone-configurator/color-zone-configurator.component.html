@@ -1,0 +1,294 @@
+<div class="color-zone-configurator">
+  <!-- Color Analysis Section -->
+  <div class="color-analysis-section">
+    <!-- Website URL Input -->
+    <div class="analysis-option">
+      <div class="option-header">
+        <span class="option-number">1</span>
+        <h4>Analyze Website</h4>
+      </div>
+      <div class="url-input-section">
+        <div class="form-field">
+          <label>Company Website URL</label>
+          <input
+            type="url"
+            [(ngModel)]="websiteUrl"
+            placeholder="https://www.example.com"
+            class="url-input"
+            [class.has-error]="errorMessage && !selectedPdfFile" />
+        </div>
+        <button
+          class="btn-analyze"
+          [disabled]="!websiteUrl || isAnalyzing || isAnalyzingPdf"
+          (click)="onAnalyze()">
+          <span *ngIf="!isAnalyzing">Analyze Website</span>
+          <span *ngIf="isAnalyzing">Analyzing...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- OR Divider -->
+    <div class="or-divider">
+      <span>OR</span>
+    </div>
+
+    <!-- PDF Upload Option -->
+    <div class="analysis-option">
+      <div class="option-header">
+        <span class="option-number">2</span>
+        <h4>Analyze PDF Document</h4>
+      </div>
+      <p class="option-description">Upload a branded document (enrollment form, marketing material, etc.) to extract colors</p>
+      <div class="pdf-input-section">
+        <div class="file-input-wrapper">
+          <input
+            type="file"
+            id="pdfColorInput"
+            accept="application/pdf"
+            (change)="onPdfFileSelected($event)"
+            class="hidden-file-input" />
+          <label for="pdfColorInput" class="btn-file-select">
+            <span *ngIf="!selectedPdfFile">Choose PDF File</span>
+            <span *ngIf="selectedPdfFile">{{ selectedPdfFile.name }}</span>
+          </label>
+          <button
+            *ngIf="selectedPdfFile"
+            class="btn-clear-file"
+            (click)="clearPdfFile()"
+            title="Clear selection">
+            &times;
+          </button>
+        </div>
+        <button
+          class="btn-analyze btn-analyze-pdf"
+          [disabled]="!selectedPdfFile || isAnalyzing || isAnalyzingPdf"
+          (click)="onAnalyzePdf()">
+          <span *ngIf="!isAnalyzingPdf">Analyze PDF</span>
+          <span *ngIf="isAnalyzingPdf">Analyzing...</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Message (shared) -->
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+  </div>
+
+  <!-- AI Suggested Colors Palette -->
+  <div class="suggested-palette" *ngIf="suggestedColors.length > 0">
+    <h4>Suggested Colors (click to apply to a zone)</h4>
+    <div class="color-swatches">
+      <div
+        *ngFor="let color of suggestedColors; let i = index"
+        class="swatch"
+        [style.background-color]="color"
+        [title]="color">
+        <span class="swatch-label" [style.color]="getContrastColor(color)">{{ i + 1 }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual Zone Preview -->
+  <div class="zone-preview">
+    <h4>Click a zone to change its color</h4>
+
+    <!-- Header Zone -->
+    <div
+      class="zone header-zone"
+      [class.selected]="selectedZoneId === 'header'"
+      [style.background-color]="getZone('header')?.color"
+      (click)="onZoneClick('header')">
+      <span class="zone-label" [style.color]="getContrastColor(getZone('header')?.color || '#000')">
+        Header
+      </span>
+      <span class="ai-badge" *ngIf="getZone('header')?.aiSuggested">AI</span>
+
+      <!-- Color picker for header -->
+      <div class="color-picker-tile" [style.display]="selectedZoneId === 'header' ? 'flex' : 'none'" (click)="$event.stopPropagation()">
+        <span class="tile-label">Change</span>
+        <input
+          class="hidden-color-input"
+          [(colorPicker)]="zones[0].color"
+          [style.background]="zones[0].color"
+          (colorPickerChange)="onColorChange('header', $event)"
+          [cpPosition]="'bottom'"
+          [cpOutputFormat]="'hex'"
+          [cpAlphaChannel]="'disabled'" />
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content-area">
+      <!-- Sidebar Zone -->
+      <div
+        class="zone sidebar-zone"
+        [class.selected]="selectedZoneId === 'sidebar'"
+        [style.background-color]="getZone('sidebar')?.color"
+        (click)="onZoneClick('sidebar')">
+        <span class="zone-label vertical" [style.color]="getContrastColor(getZone('sidebar')?.color || '#000')">
+          Sidebar
+        </span>
+        <span class="ai-badge" *ngIf="getZone('sidebar')?.aiSuggested">AI</span>
+
+        <div class="color-picker-tile" [style.display]="selectedZoneId === 'sidebar' ? 'flex' : 'none'" (click)="$event.stopPropagation()">
+          <span class="tile-label">Change</span>
+          <input
+            class="hidden-color-input"
+            [(colorPicker)]="zones[3].color"
+            [style.background]="zones[3].color"
+            (colorPickerChange)="onColorChange('sidebar', $event)"
+            [cpPosition]="'right'"
+            [cpOutputFormat]="'hex'"
+            [cpAlphaChannel]="'disabled'" />
+        </div>
+      </div>
+
+      <!-- Body Content Zone -->
+      <div class="body-content">
+        <!-- Accent Color Indicator -->
+        <div
+          class="zone accent-zone"
+          [class.selected]="selectedZoneId === 'body'"
+          [style.border-color]="getZone('body')?.color"
+          (click)="onZoneClick('body')">
+          <span class="zone-label" [style.color]="getZone('body')?.color">
+            Accent Color
+          </span>
+          <span class="ai-badge" *ngIf="getZone('body')?.aiSuggested">AI</span>
+
+          <div class="color-picker-tile" [style.display]="selectedZoneId === 'body' ? 'flex' : 'none'" (click)="$event.stopPropagation()">
+            <span class="tile-label">Change</span>
+            <input
+              class="hidden-color-input"
+              [(colorPicker)]="zones[4].color"
+              [style.background]="zones[4].color"
+              (colorPickerChange)="onColorChange('body', $event)"
+              [cpPosition]="'bottom'"
+              [cpOutputFormat]="'hex'"
+              [cpAlphaChannel]="'disabled'" />
+          </div>
+        </div>
+
+        <!-- Button Preview Area -->
+        <div class="button-preview">
+          <!-- Primary Button -->
+          <div
+            class="zone button-zone primary-button-zone"
+            [class.selected]="selectedZoneId === 'primary-button'"
+            [style.background-color]="getZone('primary-button')?.color"
+            (click)="onZoneClick('primary-button')">
+            <span class="zone-label" [style.color]="getContrastColor(getZone('primary-button')?.color || '#000')">
+              Primary Button
+            </span>
+            <span class="ai-badge" *ngIf="getZone('primary-button')?.aiSuggested">AI</span>
+
+            <div class="color-picker-tile" [style.display]="selectedZoneId === 'primary-button' ? 'flex' : 'none'" (click)="$event.stopPropagation()">
+              <span class="tile-label">Change</span>
+              <input
+                class="hidden-color-input"
+                [(colorPicker)]="zones[1].color"
+                [style.background]="zones[1].color"
+                (colorPickerChange)="onColorChange('primary-button', $event)"
+                [cpPosition]="'bottom'"
+                [cpOutputFormat]="'hex'"
+                [cpAlphaChannel]="'disabled'" />
+            </div>
+          </div>
+
+          <!-- Secondary Button -->
+          <div
+            class="zone button-zone secondary-button-zone"
+            [class.selected]="selectedZoneId === 'secondary-button'"
+            [style.background-color]="getZone('secondary-button')?.color"
+            (click)="onZoneClick('secondary-button')">
+            <span class="zone-label" [style.color]="getContrastColor(getZone('secondary-button')?.color || '#000')">
+              Secondary Button
+            </span>
+            <span class="ai-badge" *ngIf="getZone('secondary-button')?.aiSuggested">AI</span>
+
+            <div class="color-picker-tile" [style.display]="selectedZoneId === 'secondary-button' ? 'flex' : 'none'" (click)="$event.stopPropagation()">
+              <span class="tile-label">Change</span>
+              <input
+                class="hidden-color-input"
+                [(colorPicker)]="zones[2].color"
+                [style.background]="zones[2].color"
+                (colorPickerChange)="onColorChange('secondary-button', $event)"
+                [cpPosition]="'bottom'"
+                [cpOutputFormat]="'hex'"
+                [cpAlphaChannel]="'disabled'" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Background Zone -->
+        <div
+          class="zone form-background-zone"
+          [class.selected]="selectedZoneId === 'form-background'"
+          [style.background-color]="getZone('form-background')?.color"
+          (click)="onZoneClick('form-background')">
+          <span class="zone-label" [style.color]="getContrastColor(getZone('form-background')?.color || '#FFFFFF')">
+            Form Background
+          </span>
+          <span class="ai-badge" *ngIf="getZone('form-background')?.aiSuggested">AI</span>
+
+          <div class="color-picker-tile" [style.display]="selectedZoneId === 'form-background' ? 'flex' : 'none'" (click)="$event.stopPropagation()">
+            <span class="tile-label">Change</span>
+            <input
+              class="hidden-color-input"
+              [(colorPicker)]="zones[5].color"
+              [style.background]="zones[5].color"
+              (colorPickerChange)="onColorChange('form-background', $event)"
+              [cpPosition]="'bottom'"
+              [cpOutputFormat]="'hex'"
+              [cpAlphaChannel]="'disabled'" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Zone -->
+    <div
+      class="zone footer-zone"
+      [class.selected]="selectedZoneId === 'footer'"
+      [style.background-color]="getZone('footer')?.color"
+      (click)="onZoneClick('footer')">
+      <span class="zone-label" [style.color]="getContrastColor(getZone('footer')?.color || '#000')">
+        Footer
+      </span>
+      <span class="ai-badge" *ngIf="getZone('footer')?.aiSuggested">AI</span>
+
+      <div class="color-picker-tile" [style.display]="selectedZoneId === 'footer' ? 'flex' : 'none'" (click)="$event.stopPropagation()">
+        <span class="tile-label">Change</span>
+        <input
+          class="hidden-color-input"
+          [(colorPicker)]="zones[6].color"
+          [style.background]="zones[6].color"
+          (colorPickerChange)="onColorChange('footer', $event)"
+          [cpPosition]="'top'"
+          [cpOutputFormat]="'hex'"
+          [cpAlphaChannel]="'disabled'" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Color Summary List -->
+  <div class="color-summary">
+    <h4>Current Colors</h4>
+    <div class="color-list">
+      <div class="color-item" *ngFor="let zone of zones">
+        <div
+          class="color-preview"
+          [style.background-color]="zone.color"
+          (click)="onZoneClick(zone.id)">
+        </div>
+        <div class="color-info">
+          <span class="color-name">{{ zone.displayName }}</span>
+          <span class="color-value">{{ zone.color }}</span>
+        </div>
+        <span class="ai-indicator" *ngIf="zone.aiSuggested" title="AI Suggested">AI</span>
+      </div>
+    </div>
+    <button class="btn-reset" (click)="resetToDefaults()">Reset to Defaults</button>
+  </div>
+</div>

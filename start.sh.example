@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Database Configuration (Supabase PostgreSQL)
+export DB_URL="jdbc:postgresql://your-database-host:5432/your-database-name"
+export DB_USERNAME="your-database-username"
+export DB_PASSWORD="your-database-password"
+
+# Contentful CMS Configuration
+export CONTENTFUL_SPACE_ID="your-contentful-space-id"
+export CONTENTFUL_ACCESS_TOKEN="your-contentful-access-token"
+
+# Claude API Configuration
+export CLAUDE_API_KEY="your-claude-api-key-here"
+
+# Start Backend
+echo "Starting backend server..."
+cd backend
+./mvnw spring-boot:run &
+BACKEND_PID=$!
+cd ..
+
+# Start Frontend
+echo "Starting frontend server..."
+cd frontend
+npm start &
+FRONTEND_PID=$!
+cd ..
+
+echo "Backend PID: $BACKEND_PID"
+echo "Frontend PID: $FRONTEND_PID"
+echo "Backend: http://localhost:8080"
+echo "Frontend: http://localhost:4201"
+echo ""
+echo "To stop servers:"
+echo "  kill $BACKEND_PID $FRONTEND_PID"
+
+# Wait for both processes
+wait

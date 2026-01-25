@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: ai-digital-enrollment
+
+  # Multipart File Upload Configuration
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  # Supabase PostgreSQL Configuration (Transaction Pooler)
+  datasource:
+    url: jdbc:postgresql://aws-0-us-west-2.pooler.supabase.com:6543/postgres
+    username: postgres.cjpgpzrmnljcwnfjfvfu
+    password: ${SUPABASE_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      connection-timeout: 30000
+
+  # JPA Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+  # Jackson Configuration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+
+  # Cache Configuration
+  cache:
+    type: none
+  #  cache-names:
+  #    - contentful-programs
+  #    - contentful-forms
+  #  caffeine:
+  #    spec: maximumSize=100,expireAfterWrite=300s
+
+# Server Configuration
+server:
+  port: 8080
+  address: 0.0.0.0
+  servlet:
+    context-path: /api
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Contentful Configuration
+contentful:
+  space-id: ${CONTENTFUL_SPACE_ID}
+  access-token: ${CONTENTFUL_ACCESS_TOKEN}
+  management-token: ${CONTENTFUL_MANAGEMENT_TOKEN}
+  environment: master
+
+# Logo.dev API Configuration
+logo:
+  api-key: ${LOGO_DEV_API_KEY}
+  api-url: https://img.logo.dev
+
+# ScreenshotOne API Configuration
+screenshotone:
+  api-key: ${SCREENSHOTONE_API_KEY}
+
+# Claude API Configuration
+claude:
+  api-key: ${CLAUDE_API_KEY}
+  api-url: https://api.anthropic.com/v1/messages
+  model: claude-sonnet-4-20250514
+  max-tokens: 16384
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.cmrservices.enrollment: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

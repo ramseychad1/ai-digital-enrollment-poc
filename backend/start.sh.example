@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Startup script for CMR Services AI Digital Enrollment
+# Sets environment variables and starts the Spring Boot application
+
+# INSTRUCTIONS:
+# 1. Copy this file to start.sh: cp start.sh.example start.sh
+# 2. Edit start.sh and replace the placeholder values with your actual credentials
+# 3. Make it executable: chmod +x start.sh
+# 4. Run: ./start.sh
+
+export SUPABASE_DB_PASSWORD="your-supabase-password-here"
+export CONTENTFUL_SPACE_ID="your-contentful-space-id-here"
+export CONTENTFUL_ACCESS_TOKEN="your-contentful-access-token-here"
+export SUPABASE_URL="your-supabase-url-here"
+
+echo "Starting CMR Services AI Digital Enrollment..."
+echo "Environment variables set:"
+echo "  - SUPABASE_DB_PASSWORD: [hidden]"
+echo "  - CONTENTFUL_SPACE_ID: ${CONTENTFUL_SPACE_ID}"
+echo "  - CONTENTFUL_ACCESS_TOKEN: [hidden]"
+echo "  - SUPABASE_URL: ${SUPABASE_URL}"
+echo ""
+
+# Run the Spring Boot application
+mvn spring-boot:run

@@ -1,0 +1,77 @@
+@import '../../../../variables';
+
+.header {
+  // Background color set dynamically via inline style
+  color: $white;
+  padding: $spacing-md 0;
+  box-shadow: $shadow-md;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    text-decoration: none;
+    color: $white;
+    display: flex;
+    align-items: center;
+
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .program-logo {
+      max-height: 50px;
+      max-width: 200px;
+      object-fit: contain;
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  .nav {
+    display: flex;
+    gap: $spacing-lg;
+  }
+
+  .nav-link {
+    color: $white;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    .logo {
+      h1 {
+        font-size: 20px;
+      }
+
+      .program-logo {
+        max-height: 40px;
+        max-width: 150px;
+      }
+    }
+
+    .nav {
+      gap: $spacing-md;
+    }
+
+    .nav-link {
+      font-size: 14px;
+    }
+  }
+}

@@ -1,0 +1,185 @@
+@import '../../../variables';
+
+.program-landing {
+  min-height: calc(100vh - 200px);
+  padding: $spacing-xl 0;
+}
+
+.loading,
+.error-container {
+  text-align: center;
+  padding: $spacing-xl;
+}
+
+.error-container {
+  .error-text {
+    color: #dc3545;
+    font-size: 18px;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.program-details {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.program-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-xl;
+  background-color: $white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  margin-bottom: $spacing-lg;
+
+  .logo-container {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .program-logo {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .program-info {
+    flex-grow: 1;
+
+    .program-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: $dark-gray;
+      margin-bottom: $spacing-xs;
+    }
+
+    .manufacturer {
+      font-size: 18px;
+      color: $text-gray;
+      font-weight: 500;
+    }
+  }
+}
+
+.program-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  .description-section,
+  .enrollment-section {
+    padding: $spacing-xl;
+    background-color: $white;
+    border-radius: $border-radius;
+    box-shadow: $shadow-md;
+
+    h2 {
+      font-size: 24px;
+      font-weight: bold;
+      color: $dark-gray;
+      margin-bottom: $spacing-md;
+    }
+
+    p {
+      font-size: 16px;
+      color: $text-gray;
+      line-height: 1.6;
+      margin-bottom: $spacing-md;
+    }
+  }
+
+  .enrollment-section {
+    text-align: center;
+    background-color: var(--form-bg-color, $white);
+
+    .button-group {
+      display: flex;
+      gap: $spacing-md;
+      justify-content: center;
+      margin-top: $spacing-lg;
+    }
+
+    // Use primary/secondary button colors specifically in enrollment section
+    .btn-primary {
+      background-color: var(--primary-button-color, var(--primary-color));
+      color: $white;
+
+      &:hover {
+        filter: brightness(0.9);
+        transform: translateY(-1px);
+        box-shadow: $shadow-md;
+      }
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-button-color, #9E9E9E);
+      color: $white;
+      border: none;
+
+      &:hover {
+        filter: brightness(0.9);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 14px 32px;
+  border: none;
+  border-radius: $border-radius;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: $white;
+
+  &:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.btn-secondary {
+  background-color: #9E9E9E;
+  color: $white;
+  border: none;
+
+  &:hover {
+    filter: brightness(0.9);
+    transform: translateY(-1px);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .program-header {
+    flex-direction: column;
+    text-align: center;
+
+    .program-info .program-title {
+      font-size: 24px;
+    }
+  }
+
+  .program-content {
+    .button-group {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

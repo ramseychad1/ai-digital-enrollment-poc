@@ -1,0 +1,213 @@
+<div class="modal-overlay" (click)="onCancel()">
+  <div class="editor-modal" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="editor-header">
+      <h2>Visual Form Editor</h2>
+      <p class="subtitle">Edit form fields, properties, and preview changes</p>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-state" *ngIf="parseError">
+      <div class="error-icon">!</div>
+      <p>{{ parseError }}</p>
+      <button class="btn-secondary" (click)="onCancel()">Close</button>
+    </div>
+
+    <!-- Editor Content -->
+    <div class="editor-content" *ngIf="!parseError">
+      <!-- Panel 1: Fields List -->
+      <div class="panel fields-panel">
+        <div class="panel-header">
+          <h3>Fields</h3>
+          <button class="btn-add" (click)="addField()" title="Add new field">+ Add</button>
+        </div>
+        <div class="fields-list">
+          <div
+            *ngFor="let field of fields; let i = index"
+            class="field-item"
+            [class.selected]="selectedField === field"
+            (click)="selectField(field)">
+            <div class="field-info">
+              <span class="field-label">{{ field.label }}</span>
+              <span class="field-type">{{ field.type }}</span>
+            </div>
+            <div class="field-actions">
+              <button
+                class="btn-icon"
+                (click)="moveFieldUp(field); $event.stopPropagation()"
+                [disabled]="i === 0"
+                title="Move up">↑</button>
+              <button
+                class="btn-icon"
+                (click)="moveFieldDown(field); $event.stopPropagation()"
+                [disabled]="i === fields.length - 1"
+                title="Move down">↓</button>
+              <button
+                class="btn-icon btn-delete"
+                (click)="removeField(field); $event.stopPropagation()"
+                title="Remove field">×</button>
+            </div>
+            <span class="required-badge" *ngIf="field.required">*</span>
+          </div>
+          <div class="empty-state" *ngIf="fields.length === 0">
+            <p>No fields yet</p>
+            <button class="btn-secondary" (click)="addField()">Add First Field</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Properties Editor -->
+      <div class="panel properties-panel">
+        <div class="panel-header">
+          <h3>Properties</h3>
+        </div>
+        <div class="properties-form" *ngIf="selectedField">
+          <!-- Label -->
+          <div class="form-field">
+            <label>Label (Display Name)</label>
+            <input type="text" [(ngModel)]="selectedField.label" placeholder="Field label" />
+          </div>
+
+          <!-- Field Name -->
+          <div class="form-field">
+            <label>Field Name (JSON Key)</label>
+            <input
+              type="text"
+              [(ngModel)]="selectedField.fieldName"
+              (blur)="onFieldNameChange()"
+              placeholder="fieldName" />
+            <span class="help-text">camelCase, no spaces</span>
+          </div>
+
+          <!-- Type -->
+          <div class="form-field">
+            <label>Field Type</label>
+            <select [(ngModel)]="selectedField.type">
+              <option *ngFor="let type of fieldTypes" [value]="type.value">{{ type.label }}</option>
+            </select>
+          </div>
+
+          <!-- Required -->
+          <div class="form-field checkbox-field">
+            <label>
+              <input type="checkbox" [(ngModel)]="selectedField.required" />
+              Required Field
+            </label>
+          </div>
+
+          <!-- Placeholder -->
+          <div class="form-field" *ngIf="selectedField.type !== 'checkbox' && selectedField.type !== 'radio'">
+            <label>Placeholder</label>
+            <input type="text" [(ngModel)]="selectedField.placeholder" placeholder="Enter placeholder text" />
+          </div>
+
+          <!-- Description -->
+          <div class="form-field">
+            <label>Description / Help Text</label>
+            <input type="text" [(ngModel)]="selectedField.description" placeholder="Optional help text" />
+          </div>
+
+          <!-- Max Length (for text fields) -->
+          <div class="form-field" *ngIf="selectedField.type === 'text' || selectedField.type === 'textarea'">
+            <label>Max Length</label>
+            <input type="number" [(ngModel)]="selectedField.maxLength" placeholder="Optional" min="1" />
+          </div>
+
+          <!-- Options (for select/radio) -->
+          <div class="form-field options-field" *ngIf="needsOptions()">
+            <label>Options</label>
+            <div class="options-list">
+              <div class="option-item" *ngFor="let option of selectedField.options; let i = index">
+                <span class="option-value">{{ option.value }}</span>
+                <span class="option-label">{{ option.label }}</span>
+                <button class="btn-icon btn-delete" (click)="removeOption(i)" title="Remove option">×</button>
+              </div>
+              <div class="option-empty" *ngIf="!selectedField.options?.length">
+                No options defined
+              </div>
+            </div>
+            <div class="add-option">
+              <input
+                type="text"
+                [(ngModel)]="newOptionValue"
+                placeholder="Value"
+                class="option-input" />
+              <input
+                type="text"
+                [(ngModel)]="newOptionLabel"
+                placeholder="Label (optional)"
+                class="option-input" />
+              <button class="btn-add-option" (click)="addOption()" [disabled]="!newOptionValue.trim()">Add</button>
+            </div>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="!selectedField">
+          <p>Select a field to edit its properties</p>
+        </div>
+      </div>
+
+      <!-- Panel 3: Live Preview -->
+      <div class="panel preview-panel">
+        <div class="panel-header">
+          <h3>Preview</h3>
+        </div>
+        <div class="preview-form">
+          <div class="preview-field" *ngFor="let field of fields">
+            <label [class.required]="field.required">
+              {{ field.label }}
+              <span class="required-star" *ngIf="field.required">*</span>
+            </label>
+
+            <!-- Text Input -->
+            <input
+              *ngIf="field.type === 'text' || field.type === 'email' || field.type === 'phone' || field.type === 'number' || field.type === 'date'"
+              [type]="getPreviewInputType(field.type)"
+              [placeholder]="field.placeholder || ''"
+              disabled />
+
+            <!-- Textarea -->
+            <textarea
+              *ngIf="field.type === 'textarea'"
+              [placeholder]="field.placeholder || ''"
+              rows="3"
+              disabled></textarea>
+
+            <!-- Select -->
+            <select *ngIf="field.type === 'select'" disabled>
+              <option value="">{{ field.placeholder || 'Select...' }}</option>
+              <option *ngFor="let opt of field.options" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+
+            <!-- Radio -->
+            <div class="radio-group" *ngIf="field.type === 'radio'">
+              <label class="radio-option" *ngFor="let opt of field.options">
+                <input type="radio" [name]="field.fieldName" disabled />
+                {{ opt.label }}
+              </label>
+              <span class="no-options" *ngIf="!field.options?.length">No options defined</span>
+            </div>
+
+            <!-- Checkbox -->
+            <label class="checkbox-option" *ngIf="field.type === 'checkbox'">
+              <input type="checkbox" disabled />
+              {{ field.label }}
+            </label>
+
+            <!-- Description -->
+            <span class="field-description" *ngIf="field.description">{{ field.description }}</span>
+          </div>
+
+          <div class="preview-empty" *ngIf="fields.length === 0">
+            <p>Add fields to see preview</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="editor-footer" *ngIf="!parseError">
+      <button class="btn-secondary" (click)="onCancel()">Cancel</button>
+      <button class="btn-primary" (click)="onSave()">Save Changes</button>
+    </div>
+  </div>
+</div>
