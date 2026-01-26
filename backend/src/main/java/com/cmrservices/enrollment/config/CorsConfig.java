@@ -20,7 +20,7 @@ public class CorsConfig implements WebMvcConfigurer {
 
     private static final Logger log = LoggerFactory.getLogger(CorsConfig.class);
 
-    @Value("${cors.allowed.origins:http://localhost:4201}")
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:4201}")
     private String allowedOrigins;
 
     @Override
