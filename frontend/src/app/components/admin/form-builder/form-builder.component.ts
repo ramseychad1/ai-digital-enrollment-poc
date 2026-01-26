@@ -418,7 +418,7 @@ export class FormBuilderComponent implements OnInit {
 
         if (response.success) {
           setTimeout(() => {
-            window.location.href = response.programUrl;
+            this.router.navigate(['/']);
           }, 2000);
         }
       },

@@ -271,7 +271,7 @@ public class IdpController {
             response.setProgramId(programId);
             response.setFormSchemaId(formSchemaId);
             response.setMessage("Program published successfully");
-            response.setProgramUrl("http://localhost:4201");
+            response.setProgramUrl("/");
 
             return ResponseEntity.ok(response);
 
@@ -318,7 +318,7 @@ public class IdpController {
             response.setSuccess(true);
             response.setProgramId(programId);
             response.setMessage("Program updated successfully");
-            response.setProgramUrl("http://localhost:4201");
+            response.setProgramUrl("/");
 
             return ResponseEntity.ok(response);
 
@@ -378,7 +378,7 @@ public class IdpController {
             response.setProgramId(programId);
             response.setFormSchemaId(formSchemaId);
             response.setMessage("Program updated with new form successfully");
-            response.setProgramUrl("http://localhost:4201");
+            response.setProgramUrl("/");
 
             return ResponseEntity.ok(response);
 
