@@ -38,6 +38,7 @@
   .nav {
     display: flex;
     gap: $spacing-lg;
+    align-items: center;
   }
 
   .nav-link {
@@ -49,6 +50,28 @@
 
     &:hover {
       opacity: 0.8;
+    }
+  }
+
+  .btn-logout {
+    background: rgba(255, 255, 255, 0.2);
+    color: $white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 }

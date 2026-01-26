@@ -7,8 +7,11 @@
       </a>
       <nav class="nav">
         <a routerLink="/" class="nav-link">Programs</a>
-        <a routerLink="/admin/form-builder" class="nav-link">Form Builder</a>
+        <a routerLink="/admin/form-builder" class="nav-link" *ngIf="isAuthenticated">Form Builder</a>
         <a href="#" class="nav-link">Help</a>
+        <button *ngIf="isAuthenticated" (click)="logout()" class="btn-logout" [disabled]="isLoggingOut">
+          {{ isLoggingOut ? 'Logging out...' : 'Logout' }}
+        </button>
       </nav>
     </div>
   </div>
