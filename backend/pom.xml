@@ -16,7 +16,20 @@
     <artifactId>ai-digital-enrollment</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>AI Digital Enrollment</name>
-    <description>Multi-tenant patient enrollment platform backend</description>
+    <description>
+        CMR Services AI Digital Enrollment Platform
+
+        A secure, full-stack multi-tenant patient enrollment platform featuring:
+        - AI-powered PDF form analysis with Claude AI
+        - Session-based authentication with Spring Security
+        - Dynamic branding and multi-tenant architecture
+        - PostgreSQL database with Supabase
+        - Contentful CMS integration
+        - RESTful API with comprehensive health checks
+
+        Technologies: Spring Boot 3.2.1, Java 17, Spring Security, JPA/Hibernate,
+        PostgreSQL, Contentful, Claude AI (Anthropic), Apache PDFBox
+    </description>
 
     <properties>
         <java.version>17</java.version>
