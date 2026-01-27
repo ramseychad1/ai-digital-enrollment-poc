@@ -1,0 +1,45 @@
+<div class="about-container">
+  <div class="about-nav">
+    <a routerLink="/about/overview" routerLinkActive="active">Overview</a>
+    <a routerLink="/about/features" routerLinkActive="active">Features</a>
+    <a routerLink="/about/technology" routerLinkActive="active">Technology</a>
+    <a routerLink="/about/architecture" routerLinkActive="active">Architecture</a>
+  </div>
+
+  <div class="about-content">
+    <div class="page-header">
+      <h1>Technology Stack</h1>
+      <p>Modern, scalable technologies powering the platform</p>
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-category" *ngFor="let stack of techStacks">
+        <div class="category-header">
+          <div class="category-icon">{{ stack.icon }}</div>
+          <h2>{{ stack.category }}</h2>
+        </div>
+        <div class="tech-list">
+          <div class="tech-item" *ngFor="let tech of stack.technologies">
+            <div class="tech-name">{{ tech.name }}</div>
+            <div class="tech-description">{{ tech.description }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tech-highlights">
+      <div class="highlight-card">
+        <h3>🎯 Production Ready</h3>
+        <p>Enterprise-grade stack with proven reliability and scalability for healthcare applications</p>
+      </div>
+      <div class="highlight-card">
+        <h3>🔄 Continuous Integration</h3>
+        <p>Automated deployments from GitHub to Railway with zero-downtime updates</p>
+      </div>
+      <div class="highlight-card">
+        <h3>🛡️ Security First</h3>
+        <p>Session-based authentication, HTTP-only cookies, and comprehensive input validation</p>
+      </div>
+    </div>
+  </div>
+</div>

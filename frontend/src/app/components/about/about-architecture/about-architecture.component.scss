@@ -1,0 +1,258 @@
+@import '../../../../_variables';
+
+.about-container {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.about-nav {
+  background: white;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  a {
+    padding: 16px 32px;
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+
+    &:hover {
+      color: $cmr-primary;
+      background: #f8fafc;
+    }
+
+    &.active {
+      color: $cmr-primary;
+      border-bottom-color: $cmr-primary;
+      background: #fef2f2;
+    }
+  }
+}
+
+.about-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 64px;
+
+  h1 {
+    font-size: 42px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 16px 0;
+  }
+
+  p {
+    font-size: 18px;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+.architecture-diagram {
+  background: white;
+  border-radius: 12px;
+  padding: 48px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  margin-bottom: 48px;
+}
+
+.layer-section {
+  margin-bottom: 40px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.layer-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+  margin: 0 0 24px 0;
+  padding-bottom: 12px;
+  border-bottom: 3px solid $cmr-primary;
+}
+
+.layer-content {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+
+  &.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+  }
+}
+
+.node {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 200px;
+  text-align: center;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: $cmr-primary;
+  }
+
+  .node-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+  }
+
+  .node-subtitle {
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .node-tech {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 8px;
+    font-style: italic;
+  }
+}
+
+.client-node {
+  background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+  border-color: #38bdf8;
+
+  .node-title {
+    color: #0369a1;
+  }
+}
+
+.app-node {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  border-color: $cmr-primary;
+
+  .node-title {
+    color: darken($cmr-primary, 10%);
+  }
+}
+
+.service-node {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border-color: #4ade80;
+
+  .service-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  .node-title {
+    color: #15803d;
+  }
+}
+
+.arrow-down {
+  text-align: center;
+  font-size: 32px;
+  color: $cmr-primary;
+  margin: 20px 0;
+  font-weight: 700;
+}
+
+.bidirectional-arrow {
+  text-align: center;
+  font-size: 32px;
+  color: $cmr-primary;
+  margin: 12px 0;
+  font-weight: 700;
+}
+
+.core-section {
+  background: #fef2f2;
+  padding: 32px;
+  border-radius: 12px;
+  border: 2px dashed $cmr-primary;
+}
+
+.architecture-notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.note-card {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  border-left: 4px solid $cmr-primary;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 16px 0;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-nav a {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .page-header {
+    h1 {
+      font-size: 32px;
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+
+  .architecture-diagram {
+    padding: 24px;
+  }
+
+  .layer-content {
+    flex-direction: column;
+    align-items: stretch;
+
+    &.services-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .node {
+    min-width: auto;
+  }
+
+  .architecture-notes {
+    grid-template-columns: 1fr;
+  }
+}

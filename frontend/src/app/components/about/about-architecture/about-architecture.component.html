@@ -1,0 +1,70 @@
+<div class="about-container">
+  <div class="about-nav">
+    <a routerLink="/about/overview" routerLinkActive="active">Overview</a>
+    <a routerLink="/about/features" routerLinkActive="active">Features</a>
+    <a routerLink="/about/technology" routerLinkActive="active">Technology</a>
+    <a routerLink="/about/architecture" routerLinkActive="active">Architecture</a>
+  </div>
+
+  <div class="about-content">
+    <div class="page-header">
+      <h1>System Architecture</h1>
+      <p>Three-tier architecture with external service integrations</p>
+    </div>
+
+    <div class="architecture-diagram">
+      <!-- Client Layer -->
+      <div class="layer-section">
+        <h2 class="layer-title">Client Layer</h2>
+        <div class="layer-content">
+          <div class="node client-node" *ngFor="let client of clientLayer">
+            <div class="node-title">{{ client.name }}</div>
+            <div class="node-subtitle">{{ client.role }}</div>
+          </div>
+        </div>
+        <div class="arrow-down">↓</div>
+      </div>
+
+      <!-- Application Core -->
+      <div class="layer-section core-section">
+        <h2 class="layer-title">Application Core</h2>
+        <div class="layer-content">
+          <div class="node app-node" *ngFor="let app of applicationCore">
+            <div class="node-title">{{ app.name }}</div>
+            <div class="node-subtitle">{{ app.description }}</div>
+            <div class="node-tech">{{ app.tech }}</div>
+          </div>
+        </div>
+        <div class="bidirectional-arrow">↕</div>
+        <div class="arrow-down">↓</div>
+      </div>
+
+      <!-- Services & Data -->
+      <div class="layer-section">
+        <h2 class="layer-title">Services & Data</h2>
+        <div class="layer-content services-grid">
+          <div class="node service-node" *ngFor="let service of servicesData">
+            <div class="service-icon">{{ service.icon }}</div>
+            <div class="node-title">{{ service.name }}</div>
+            <div class="node-subtitle">{{ service.purpose }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="architecture-notes">
+      <div class="note-card">
+        <h3>🔄 Data Flow</h3>
+        <p>Requests flow from clients through the Angular frontend to the Spring Boot API, which orchestrates calls to external services and databases.</p>
+      </div>
+      <div class="note-card">
+        <h3>🔒 Security</h3>
+        <p>Spring Security manages authentication at the API layer with session-based auth and HTTP-only cookies for cross-origin requests.</p>
+      </div>
+      <div class="note-card">
+        <h3>⚡ Performance</h3>
+        <p>Railway's global CDN serves the static Angular frontend while Supabase provides connection pooling for efficient database access.</p>
+      </div>
+    </div>
+  </div>
+</div>

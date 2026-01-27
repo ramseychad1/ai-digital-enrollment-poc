@@ -4,12 +4,32 @@ import { ProgramLandingComponent } from './components/program-landing/program-la
 import { FormRendererComponent } from './components/form-renderer/form-renderer.component';
 import { FormBuilderComponent } from './components/admin/form-builder/form-builder.component';
 import { LoginComponent } from './components/auth/login/login.component';
+import { AboutOverviewComponent } from './components/about/about-overview/about-overview.component';
+import { AboutFeaturesComponent } from './components/about/about-features/about-features.component';
+import { AboutTechnologyComponent } from './components/about/about-technology/about-technology.component';
+import { AboutArchitectureComponent } from './components/about/about-architecture/about-architecture.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent
+  },
+  {
+    path: 'about/overview',
+    component: AboutOverviewComponent
+  },
+  {
+    path: 'about/features',
+    component: AboutFeaturesComponent
+  },
+  {
+    path: 'about/technology',
+    component: AboutTechnologyComponent
+  },
+  {
+    path: 'about/architecture',
+    component: AboutArchitectureComponent
   },
   {
     path: '',

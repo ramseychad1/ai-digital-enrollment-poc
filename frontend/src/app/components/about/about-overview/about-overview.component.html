@@ -1,0 +1,80 @@
+<div class="about-container">
+  <div class="about-nav">
+    <a routerLink="/about/overview" routerLinkActive="active">Overview</a>
+    <a routerLink="/about/features" routerLinkActive="active">Features</a>
+    <a routerLink="/about/technology" routerLinkActive="active">Technology</a>
+    <a routerLink="/about/architecture" routerLinkActive="active">Architecture</a>
+  </div>
+
+  <div class="about-content">
+    <div class="hero-section">
+      <h1 class="title">AI Digital Enrollment</h1>
+      <p class="subtitle">Multi-Tenant Patient Enrollment Platform by CMR Services</p>
+
+      <div class="tagline">
+        <p>A unified, intelligent platform designed to streamline patient enrollment across multiple pharmaceutical programs</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card" *ngFor="let stat of stats">
+          <div class="stat-value">{{ stat.value }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+
+      <div class="badges">
+        <span class="badge" *ngFor="let badge of badges">{{ badge }}</span>
+      </div>
+    </div>
+
+    <div class="description-section">
+      <div class="description-card">
+        <h2>About the Platform</h2>
+        <p>
+          Leveraging a single codebase to serve infinite distinct program configurations with dynamic branding,
+          AI-powered form generation, and enterprise-grade security. Deployed on Railway cloud platform for
+          scalability and reliability.
+        </p>
+
+        <div class="highlights">
+          <div class="highlight-item">
+            <div class="highlight-icon">🎨</div>
+            <div class="highlight-content">
+              <h3>Dynamic Branding</h3>
+              <p>Each program maintains unique colors, logos, and visual identity</p>
+            </div>
+          </div>
+
+          <div class="highlight-item">
+            <div class="highlight-icon">🤖</div>
+            <div class="highlight-content">
+              <h3>AI-Powered</h3>
+              <p>Claude Sonnet 4 analyzes PDFs and generates enrollment forms automatically</p>
+            </div>
+          </div>
+
+          <div class="highlight-item">
+            <div class="highlight-icon">🔒</div>
+            <div class="highlight-content">
+              <h3>Enterprise Security</h3>
+              <p>Session-based authentication with secure HTTP-only cookies</p>
+            </div>
+          </div>
+
+          <div class="highlight-item">
+            <div class="highlight-icon">☁️</div>
+            <div class="highlight-content">
+              <h3>Cloud Native</h3>
+              <p>Deployed on Railway with automatic CI/CD from GitHub</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-section">
+        <a routerLink="/" class="btn-primary">Get Started</a>
+        <a routerLink="/about/features" class="btn-secondary">Learn More</a>
+      </div>
+    </div>
+  </div>
+</div>
