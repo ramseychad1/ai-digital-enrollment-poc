@@ -56,7 +56,7 @@ server:
       cookie:
         http-only: true
         secure: ${SESSION_COOKIE_SECURE:false}  # true for HTTPS (production), false for HTTP (local)
-        same-site: lax
+        same-site: ${SESSION_COOKIE_SAME_SITE:lax}  # Use 'none' for cross-origin (production), 'lax' for local
   error:
     include-message: always
     include-binding-errors: always
