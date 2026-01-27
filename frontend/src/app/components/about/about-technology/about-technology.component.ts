@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HeaderComponent } from '../../shared/header/header.component';
+import { FooterComponent } from '../../shared/footer/footer.component';
 
 interface Technology {
   name: string;
@@ -16,7 +18,7 @@ interface TechStack {
 @Component({
   selector: 'app-about-technology',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, HeaderComponent, FooterComponent],
   templateUrl: './about-technology.component.html',
   styleUrls: ['./about-technology.component.scss']
 })
