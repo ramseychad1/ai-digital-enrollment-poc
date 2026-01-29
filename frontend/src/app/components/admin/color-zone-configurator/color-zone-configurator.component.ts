@@ -396,4 +396,39 @@ export class ColorZoneConfiguratorComponent implements OnInit, OnChanges {
 
     this.configChange.emit(updatedConfig);
   }
+
+  /**
+   * Check if browser supports EyeDropper API
+   */
+  get supportsEyeDropper(): boolean {
+    return 'EyeDropper' in window;
+  }
+
+  /**
+   * Open eyedropper to sample color from screen
+   * Uses the browser's native EyeDropper API (Chrome, Edge, Opera 95+)
+   * @param zoneId - The zone to apply the sampled color to
+   */
+  async openEyeDropper(zoneId: string): Promise<void> {
+    if (!this.supportsEyeDropper) {
+      alert('EyeDropper is not supported in this browser. Please use Chrome, Edge, or Opera.');
+      return;
+    }
+
+    try {
+      // Create eyedropper instance
+      const eyeDropper = new (window as any).EyeDropper();
+
+      // Open eyedropper and wait for user to select a color
+      const result = await eyeDropper.open();
+
+      // Apply the sampled color to the zone
+      if (result && result.sRGBHex) {
+        this.onColorChange(zoneId, result.sRGBHex);
+      }
+    } catch (error) {
+      // User cancelled or error occurred
+      console.log('EyeDropper cancelled or error:', error);
+    }
+  }
 }
