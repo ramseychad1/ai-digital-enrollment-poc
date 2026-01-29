@@ -137,6 +137,11 @@ export CLAUDE_API_KEY="sk-ant-your-api-key"
 export AUTH_USERNAME="demo"
 export AUTH_PASSWORD="demo123"
 
+# Database Schema Management (optional)
+# export DDL_AUTO="validate"  # Default: validate (safe, no changes)
+# export DDL_AUTO="update"    # Add new columns/tables without dropping
+# export DDL_AUTO="create"    # Drop and recreate (DESTRUCTIVE - fresh start)
+
 # Optional: External APIs
 export LOGO_DEV_API_KEY="your-logo-dev-key"
 export SCREENSHOTONE_API_KEY="your-screenshotone-key"
@@ -343,6 +348,10 @@ npx playwright test
 
 ### Backend Optional
 - `AUTH_USERNAME` - Authentication username (default: demo)
+- `DDL_AUTO` - Database schema management mode (default: validate)
+  - `validate` - Verify schema matches entities, no changes (safest for production)
+  - `update` - Add new tables/columns, never drops (safe for development)
+  - `create` - Drop and recreate all tables (DESTRUCTIVE - use for fresh start only)
 - `LOGO_DEV_API_KEY` - Logo.dev API key
 - `SCREENSHOTONE_API_KEY` - ScreenshotOne API key
 - `CORS_ALLOWED_ORIGINS` - Allowed CORS origins (default: http://localhost:4201)
@@ -351,6 +360,82 @@ npx playwright test
 
 ### Frontend (Railway Only)
 - `API_URL` - Backend API URL (optional, auto-detected by default)
+
+## 🗄️ Database Schema Management
+
+The application uses environment-based database schema management to prevent accidental data loss.
+
+### Schema Modes
+
+**Default Mode: `validate`** (Production Safe)
+- Verifies that entity classes match database schema
+- Never modifies the database
+- Application fails to start if schema mismatch detected
+- **Use for**: Production, Railway deployment
+
+**Update Mode: `update`**
+- Automatically adds new tables and columns
+- Never drops existing tables or columns
+- Safe for iterative development
+- **Use for**: Local development, staging environments
+
+**Create Mode: `create`** ⚠️ **DESTRUCTIVE**
+- Drops all tables and recreates from scratch
+- **ALL DATA IS LOST**
+- **Use for**: Fresh start, initial setup, testing
+
+### Usage Examples
+
+**Normal Development (preserves data):**
+```bash
+cd backend
+source start.sh
+mvn spring-boot:run
+# Uses default 'validate' mode - safe restart
+```
+
+**Fresh Start (clears all data):**
+```bash
+cd backend
+export DDL_AUTO=create
+source start.sh
+mvn spring-boot:run
+# Drops and recreates all tables
+```
+
+**Development with Schema Changes:**
+```bash
+cd backend
+export DDL_AUTO=update
+source start.sh
+mvn spring-boot:run
+# Adds new tables/columns automatically
+```
+
+### Railway Configuration
+
+For Railway production deployment, add environment variable:
+```
+DDL_AUTO=validate
+```
+
+This ensures the database schema is never modified automatically in production.
+
+### First-Time Setup
+
+On first run with an empty database, you have two options:
+
+1. **Use `create` mode** (recommended for initial setup):
+   ```bash
+   export DDL_AUTO=create
+   mvn spring-boot:run
+   ```
+
+2. **Run SQL schema manually** then use `validate`:
+   - Create tables using provided SQL schema
+   - Set `DDL_AUTO=validate` for subsequent runs
+
+After initial setup, use `validate` (default) to protect your data.
 
 ## 🏢 License
 

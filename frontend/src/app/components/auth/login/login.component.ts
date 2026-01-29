@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
     // Check if already authenticated
     this.authService.checkAuthStatus().subscribe(status => {
       if (status.authenticated) {
-        this.router.navigate(['/admin/form-builder']);
+        this.router.navigate(['/']);
       }
     });
 
@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(username, password).subscribe({
       next: (response) => {
         if (response.success) {
-          this.router.navigate(['/admin/form-builder']);
+          this.router.navigate(['/']);
         } else {
           this.errorMessage = response.message || 'Login failed';
           this.isLoading = false;

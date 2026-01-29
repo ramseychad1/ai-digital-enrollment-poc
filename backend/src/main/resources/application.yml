@@ -22,7 +22,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: ${DDL_AUTO:validate}  # validate (safe), update (add changes), create (drop/recreate)
     show-sql: true
     properties:
       hibernate:
