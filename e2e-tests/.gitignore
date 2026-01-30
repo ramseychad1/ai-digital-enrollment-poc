@@ -3,5 +3,6 @@ dist/
 test-results/
 playwright-report/
 playwright/.cache/
+playwright/.auth/
 .env.local
 *.log

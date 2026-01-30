@@ -19,25 +19,51 @@ export default defineConfig({
   },
 
   projects: [
+    // Setup project for authentication
+    { name: 'setup', testMatch: /auth\.setup\.ts/ },
+
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      testIgnore: /auth\.setup\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        // Use authenticated state for all tests
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
     },
     // Uncomment to add more browsers
     // {
     //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
+    //   use: {
+    //     ...devices['Desktop Firefox'],
+    //     storageState: 'playwright/.auth/user.json',
+    //   },
+    //   dependencies: ['setup'],
     // },
     // {
     //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
+    //   use: {
+    //     ...devices['Desktop Safari'],
+    //     storageState: 'playwright/.auth/user.json',
+    //   },
+    //   dependencies: ['setup'],
     // },
   ],
 
-  // Run local dev server before starting tests (optional)
-  // webServer: {
-  //   command: 'cd ../frontend && npm start',
-  //   url: 'http://localhost:4201',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  // Run local dev servers before starting tests
+  webServer: [
+    {
+      command: 'cd ../backend && ./start.sh',
+      url: 'http://localhost:8080/api/health',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120000,
+    },
+    {
+      command: 'cd ../frontend && npm start',
+      url: 'http://localhost:4201',
+      reuseExistingServer: !process.env.CI,
+      timeout: 120000,
+    },
+  ],
 });

@@ -4,7 +4,9 @@ export abstract class BasePage {
   constructor(protected page: Page) {}
 
   async waitForPageLoad(): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
+    // Small delay to let Angular hydrate
+    await this.page.waitForTimeout(500);
   }
 
   async getTitle(): Promise<string> {

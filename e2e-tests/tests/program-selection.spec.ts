@@ -21,7 +21,8 @@ test.describe('Program Selection', () => {
   test('should have navigation menu with correct links', async ({ page }) => {
     await expect(page.locator('a', { hasText: 'Programs' })).toBeVisible();
     await expect(page.locator('a', { hasText: 'Form Builder' })).toBeVisible();
-    await expect(page.locator('a', { hasText: 'Help' })).toBeVisible();
+    await expect(page.locator('a', { hasText: 'About' })).toBeVisible();
+    await expect(page.locator('button', { hasText: 'Logout' })).toBeVisible();
   });
 
   test('should navigate to Form Builder from header', async ({ page }) => {
