@@ -13,3 +13,7 @@ artifacts/
 
 # Environment variables and credentials
 start.sh
+
+# Pencil design files
+pencil/
+*.pen
