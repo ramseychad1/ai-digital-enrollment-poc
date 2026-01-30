@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, $gray-600 0%, $black 100%);
   padding: 20px;
 }
 
@@ -82,6 +82,43 @@
 
       &::placeholder {
         color: #aaa;
+      }
+    }
+
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+
+      .form-control {
+        padding-right: 48px;
+      }
+
+      .password-toggle-btn {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        padding: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        transition: color 0.2s ease;
+
+        &:hover {
+          color: #333;
+        }
+
+        &:focus {
+          outline: none;
+          color: $cmr-primary;
+        }
+
+        svg {
+          display: block;
+        }
       }
     }
 
