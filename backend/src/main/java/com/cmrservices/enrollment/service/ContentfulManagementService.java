@@ -137,6 +137,8 @@ public class ContentfulManagementService {
         } catch (CMAHttpException e) {
             log.error("Contentful HTTP Error - Message: {}", e.getMessage());
             log.error("Contentful HTTP Error - Exception Details: {}", e.toString());
+            String errorBody = e.getErrorBody() != null ? e.getErrorBody().toString() : "No error body";
+            log.error("Contentful Error Body: {}", errorBody);
             if (e.getCause() != null) {
                 log.error("Cause: {}", e.getCause().getMessage());
             }
@@ -211,6 +213,8 @@ public class ContentfulManagementService {
         } catch (CMAHttpException e) {
             log.error("Contentful HTTP Error - Message: {}", e.getMessage());
             log.error("Contentful HTTP Error - Exception Details: {}", e.toString());
+            String errorBody = e.getErrorBody() != null ? e.getErrorBody().toString() : "No error body";
+            log.error("Contentful Error Body: {}", errorBody);
             if (e.getCause() != null) {
                 log.error("Cause: {}", e.getCause().getMessage());
             }
