@@ -387,6 +387,18 @@ export class FormBuilderComponent implements OnInit {
 
   // NEW: Publish to Contentful
   publishToContentful(): void {
+    // Validate logoUrl before publishing
+    if (this.programConfig.logoUrl && this.programConfig.logoUrl.startsWith('data:')) {
+      alert('Error: Base64 data URLs are not supported for logos. Please use the "Auto-Fetch Logo" button or provide a regular HTTP/HTTPS URL.');
+      return;
+    }
+
+    // Validate logoUrl length (Contentful Symbol max is 255 chars)
+    if (this.programConfig.logoUrl && this.programConfig.logoUrl.length > 255) {
+      alert('Error: Logo URL is too long (maximum 255 characters). Please use a shorter URL or an image hosting service.');
+      return;
+    }
+
     this.isPublishing = true;
     this.publishSuccess = false;
     this.publishMessage = null;
@@ -434,6 +446,18 @@ export class FormBuilderComponent implements OnInit {
   // Update existing program in Contentful
   updateProgram(): void {
     if (!this.editProgramId) return;
+
+    // Validate logoUrl before updating
+    if (this.programConfig.logoUrl && this.programConfig.logoUrl.startsWith('data:')) {
+      alert('Error: Base64 data URLs are not supported for logos. Please use the "Auto-Fetch Logo" button or provide a regular HTTP/HTTPS URL.');
+      return;
+    }
+
+    // Validate logoUrl length (Contentful Symbol max is 255 chars)
+    if (this.programConfig.logoUrl && this.programConfig.logoUrl.length > 255) {
+      alert('Error: Logo URL is too long (maximum 255 characters). Please use a shorter URL or an image hosting service.');
+      return;
+    }
 
     this.isPublishing = true;
     this.publishSuccess = false;
@@ -485,6 +509,18 @@ export class FormBuilderComponent implements OnInit {
   // Update existing program with new PDF/schema
   updateProgramWithSchema(): void {
     if (!this.editProgramId) return;
+
+    // Validate logoUrl before updating
+    if (this.programConfig.logoUrl && this.programConfig.logoUrl.startsWith('data:')) {
+      alert('Error: Base64 data URLs are not supported for logos. Please use the "Auto-Fetch Logo" button or provide a regular HTTP/HTTPS URL.');
+      return;
+    }
+
+    // Validate logoUrl length (Contentful Symbol max is 255 chars)
+    if (this.programConfig.logoUrl && this.programConfig.logoUrl.length > 255) {
+      alert('Error: Logo URL is too long (maximum 255 characters). Please use a shorter URL or an image hosting service.');
+      return;
+    }
 
     this.isPublishing = true;
     this.publishSuccess = false;

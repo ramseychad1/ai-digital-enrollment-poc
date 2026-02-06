@@ -231,6 +231,16 @@ public class IdpController {
     public ResponseEntity<PublishResponse> publishToContentful(@RequestBody ProgramConfigRequest config) {
         log.info("Publishing to Contentful: {}", config.getDisplayName());
 
+        // Validate logo URL
+        String logoError = validateLogoUrl(config.getLogoUrl());
+        if (logoError != null) {
+            log.warn("Invalid logo URL: {}", logoError);
+            PublishResponse response = new PublishResponse();
+            response.setSuccess(false);
+            response.setMessage(logoError);
+            return ResponseEntity.badRequest().body(response);
+        }
+
         try {
             // 1. Extract formId from the JSON schema itself (not PDF filename)
             String schemaFormId = extractFormIdFromSchema(config.getFormSchema());
@@ -296,6 +306,16 @@ public class IdpController {
     ) {
         log.info("Updating program in Contentful: {}", programId);
 
+        // Validate logo URL
+        String logoError = validateLogoUrl(updateData.get("logoUrl"));
+        if (logoError != null) {
+            log.warn("Invalid logo URL: {}", logoError);
+            PublishResponse response = new PublishResponse();
+            response.setSuccess(false);
+            response.setMessage(logoError);
+            return ResponseEntity.badRequest().body(response);
+        }
+
         try {
             contentfulManagementService.updateProgram(
                 programId,
@@ -342,6 +362,16 @@ public class IdpController {
         @RequestBody ProgramConfigRequest config
     ) {
         log.info("Updating program {} with new schema", programId);
+
+        // Validate logo URL
+        String logoError = validateLogoUrl(config.getLogoUrl());
+        if (logoError != null) {
+            log.warn("Invalid logo URL: {}", logoError);
+            PublishResponse response = new PublishResponse();
+            response.setSuccess(false);
+            response.setMessage(logoError);
+            return ResponseEntity.badRequest().body(response);
+        }
 
         try {
             // 1. Extract formId from the new JSON schema
@@ -391,6 +421,28 @@ public class IdpController {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    /**
+     * Validate logo URL before sending to Contentful
+     * Returns error message if invalid, null if valid
+     */
+    private String validateLogoUrl(String logoUrl) {
+        if (logoUrl == null || logoUrl.isEmpty()) {
+            return null; // Empty is valid
+        }
+
+        // Check for base64 data URLs
+        if (logoUrl.startsWith("data:")) {
+            return "Logo URL cannot be a base64 data URL. Please use an HTTP/HTTPS URL or leave blank.";
+        }
+
+        // Check length (Contentful Symbol field max is 255 characters)
+        if (logoUrl.length() > 255) {
+            return "Logo URL is too long (maximum 255 characters). Please use a shorter URL.";
+        }
+
+        return null; // Valid
     }
 
     /**

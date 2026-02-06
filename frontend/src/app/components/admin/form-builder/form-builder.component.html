@@ -125,9 +125,9 @@
 
             <div class="form-field">
               <label>Logo URL</label>
-              <input type="url" [(ngModel)]="programConfig.logoUrl" placeholder="https://example.com/logo.svg" />
+              <input type="url" [(ngModel)]="programConfig.logoUrl" placeholder="https://example.com/logo.svg" maxlength="255" />
               <img *ngIf="programConfig.logoUrl" [src]="programConfig.logoUrl" class="logo-preview" alt="Logo preview" />
-              <p class="help-text">Direct URL to company/product logo image</p>
+              <p class="help-text">Direct URL to company/product logo image (HTTP/HTTPS only, max 255 characters). Use "Auto-Fetch Logo" button below or paste a hosted image URL.</p>
             </div>
           </div>
 
