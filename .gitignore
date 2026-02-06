@@ -17,3 +17,10 @@ start.sh
 # Pencil design files
 pencil/
 *.pen
+
+# Sample enrollment forms and exports
+Enrollment Forms/
+contentful-*.json
+
+# Working notes
+ClaudePrompt.txt
