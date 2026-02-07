@@ -87,6 +87,10 @@
         <label for="rememberMe">Remember me</label>
       </div>
 
+      <div class="session-expired-message" *ngIf="sessionExpiredMessage">
+        {{ sessionExpiredMessage }}
+      </div>
+
       <div class="error-message" *ngIf="errorMessage">
         {{ errorMessage }}
       </div>

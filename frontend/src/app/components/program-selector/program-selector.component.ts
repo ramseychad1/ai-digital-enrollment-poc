@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, catchError, of, interval, Subscription } from 'rxjs';
 import { Program } from '../../models/program.model';
 import { ProgramService } from '../../services/program.service';
 import { BrandingService } from '../../services/branding.service';
+import { AuthService } from '../../services/auth.service';
 import { HeaderComponent } from '../shared/header/header.component';
 import { FooterComponent } from '../shared/footer/footer.component';
 
@@ -15,7 +16,7 @@ import { FooterComponent } from '../shared/footer/footer.component';
   templateUrl: './program-selector.component.html',
   styleUrl: './program-selector.component.scss'
 })
-export class ProgramSelectorComponent implements OnInit {
+export class ProgramSelectorComponent implements OnInit, OnDestroy {
   programs: Program[] = [];
   errorMessage: string = '';
   isLoading: boolean = true;
@@ -25,9 +26,13 @@ export class ProgramSelectorComponent implements OnInit {
   programToDelete: Program | null = null;
   isDeleting: boolean = false;
 
+  // Session check interval (5 minutes)
+  private sessionCheckInterval?: Subscription;
+
   constructor(
     private programService: ProgramService,
     private brandingService: BrandingService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
@@ -35,6 +40,24 @@ export class ProgramSelectorComponent implements OnInit {
     // Reset to CMR Services default branding
     this.brandingService.resetToDefault();
     this.loadPrograms();
+
+    // Check session status every 5 minutes
+    // This helps detect expired sessions even without user interaction
+    this.sessionCheckInterval = interval(5 * 60 * 1000).subscribe(() => {
+      this.authService.checkAuthStatus().subscribe({
+        error: () => {
+          // Session check failed - likely expired, will be handled by interceptor
+          console.warn('Session check failed - redirecting to login');
+        }
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up session check interval
+    if (this.sessionCheckInterval) {
+      this.sessionCheckInterval.unsubscribe();
+    }
   }
 
   loadPrograms(): void {

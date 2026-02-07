@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   isLoading = false;
   errorMessage: string | null = null;
+  sessionExpiredMessage: string | null = null;
   showPassword = false;
 
   constructor(
@@ -24,6 +25,14 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Check for session expired message
+    const expiredMsg = sessionStorage.getItem('sessionExpiredMessage');
+    if (expiredMsg) {
+      this.sessionExpiredMessage = expiredMsg;
+      // Clear the message after showing it
+      sessionStorage.removeItem('sessionExpiredMessage');
+    }
+
     // Check if already authenticated
     this.authService.checkAuthStatus().subscribe(status => {
       if (status.authenticated) {
