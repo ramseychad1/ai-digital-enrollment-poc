@@ -2,10 +2,10 @@
   <div class="container">
     <div class="header-content">
       <a routerLink="/" class="logo">
-        <img *ngIf="branding.logoUrl" [src]="branding.logoUrl" [alt]="branding.companyName" class="program-logo">
-        <h1 *ngIf="!branding.logoUrl">{{ branding.companyName }}</h1>
+        <img *ngIf="branding.logoUrl" [src]="branding.logoUrl" [alt]="programName || branding.companyName" class="program-logo">
+        <h1 *ngIf="!branding.logoUrl">{{ programName || branding.companyName }}</h1>
       </a>
-      <nav class="nav">
+      <nav class="nav" *ngIf="showNav">
         <a routerLink="/" class="nav-link">Programs</a>
         <a routerLink="/admin/form-builder" class="nav-link" *ngIf="isAuthenticated">Form Builder</a>
         <a routerLink="/about/overview" class="nav-link">About</a>

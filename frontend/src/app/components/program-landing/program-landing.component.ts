@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, catchError, of } from 'rxjs';
 import { Program } from '../../models/program.model';
@@ -11,7 +12,7 @@ import { FooterComponent } from '../shared/footer/footer.component';
 @Component({
   selector: 'app-program-landing',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent],
   templateUrl: './program-landing.component.html',
   styleUrl: './program-landing.component.scss'
 })
@@ -21,6 +22,8 @@ export class ProgramLandingComponent implements OnInit {
   programId!: string;
   errorMessage: string = '';
   isLoading: boolean = true;
+  userType: 'patient' | 'provider' = 'patient';
+  recaptchaChecked: boolean = false;
 
   constructor(
     private route: ActivatedRoute,

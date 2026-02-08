@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { BrandingService, Branding } from '../../../services/branding.service';
@@ -12,6 +12,8 @@ import { AuthService } from '../../../services/auth.service';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit {
+  @Input() programName?: string;
+  @Input() showNav: boolean = true;
   branding!: Branding;
   isAuthenticated = false;
   isLoggingOut = false;

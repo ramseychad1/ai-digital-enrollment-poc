@@ -81,11 +81,11 @@ body {
 
 // Form field styles
 .form-field {
-  margin-bottom: $spacing-md;
+  margin-bottom: 12px;
 
   label {
     display: block;
-    margin-bottom: $spacing-xs;
+    margin-bottom: 6px;
     font-weight: 500;
     color: $dark-gray;
   }

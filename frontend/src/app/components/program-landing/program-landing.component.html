@@ -1,44 +1,98 @@
-<app-header></app-header>
+<app-header [programName]="program?.displayName" [showNav]="false"></app-header>
 
 <main class="program-landing">
-  <div class="container">
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="loading">
-      <p>Loading program details...</p>
-    </div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading program details...</p>
+  </div>
 
-    <!-- Error State -->
-    <div *ngIf="errorMessage && !isLoading" class="error-container">
-      <p class="error-text">{{ errorMessage }}</p>
-      <button class="btn-primary" (click)="goBack()">Back to Programs</button>
-    </div>
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="error-container">
+    <p class="error-text">{{ errorMessage }}</p>
+    <button class="btn-primary" (click)="goBack()">Back to Programs</button>
+  </div>
 
-    <!-- Program Details -->
-    <div *ngIf="!isLoading && !errorMessage && (program$ | async) as program" class="program-details">
-      <div class="program-header">
-        <div class="logo-container" *ngIf="program.logoUrl">
-          <img [src]="program.logoUrl" [alt]="program.displayName" class="program-logo">
-        </div>
-        <div class="program-info">
-          <h1 class="program-title">{{ program.displayName }}</h1>
-          <p class="manufacturer" *ngIf="program.manufacturer">{{ program.manufacturer }}</p>
-        </div>
-      </div>
+  <!-- Program Welcome -->
+  <div *ngIf="!isLoading && !errorMessage && (program$ | async) as program" class="welcome-container">
+    <div class="main-content">
+      <!-- Left Card -->
+      <div class="left-card">
+        <!-- User Type Selection -->
+        <div class="radio-group">
+          <div class="radio-option">
+            <label class="radio-wrapper">
+              <input
+                type="radio"
+                name="userType"
+                value="patient"
+                [(ngModel)]="userType"
+              />
+              <span class="radio-label">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" class="icon">
+                  <rect width="48" height="48" rx="8" fill="#E8F5E9"/>
+                  <path d="M24 14C21.79 14 20 15.79 20 18C20 20.21 21.79 22 24 22C26.21 22 28 20.21 28 18C28 15.79 26.21 14 24 14ZM24 24C20.67 24 14 25.67 14 29V32H34V29C34 25.67 27.33 24 24 24Z" fill="#4CAF50"/>
+                </svg>
+                I'm a patient
+              </span>
+            </label>
+          </div>
 
-      <div class="program-content">
-        <div class="description-section" *ngIf="program.shortDescription">
-          <h2>About This Program</h2>
-          <p>{{ program.shortDescription }}</p>
-        </div>
-
-        <div class="enrollment-section">
-          <h2>Ready to Enroll?</h2>
-          <p>Click the button below to begin the enrollment process. You'll be asked to provide some basic information.</p>
-          <div class="button-group">
-            <button class="btn-secondary" (click)="goBack()">← Back to Programs</button>
-            <button class="btn-primary" (click)="startEnrollment()">Start Enrollment →</button>
+          <div class="radio-option">
+            <label class="radio-wrapper">
+              <input
+                type="radio"
+                name="userType"
+                value="provider"
+                [(ngModel)]="userType"
+              />
+              <span class="radio-label">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" class="icon">
+                  <rect width="48" height="48" rx="8" fill="#E3F2FD"/>
+                  <path d="M24 14C21.79 14 20 15.79 20 18C20 20.21 21.79 22 24 22C26.21 22 28 20.21 28 18C28 15.79 26.21 14 24 14ZM24 24C20.67 24 14 25.67 14 29V30H20V32C20 32.55 20.45 33 21 33H27C27.55 33 28 32.55 28 32V30H34V29C34 25.67 27.33 24 24 24Z" fill="#2196F3"/>
+                </svg>
+                I'm a provider
+              </span>
+            </label>
           </div>
         </div>
+
+        <!-- reCAPTCHA Placeholder -->
+        <div class="recaptcha-box">
+          <div class="recaptcha-left">
+            <label class="checkbox-wrapper">
+              <input
+                type="checkbox"
+                [(ngModel)]="recaptchaChecked"
+              />
+              <span class="checkbox-label">I'm not a robot</span>
+            </label>
+          </div>
+          <div class="recaptcha-logo">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M16 0C7.163 0 0 7.163 0 16s7.163 16 16 16 16-7.163 16-16S24.837 0 16 0zm0 30C8.268 30 2 23.732 2 16S8.268 2 16 2s14 6.268 14 14-6.268 14-14 14z" fill="#9E9E9E"/>
+              <path d="M16 8c-4.411 0-8 3.589-8 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8zm0 14c-3.309 0-6-2.691-6-6s2.691-6 6-6 6 2.691 6 6-2.691 6-6 6z" fill="#9E9E9E"/>
+            </svg>
+            <div class="recaptcha-text">
+              <div class="recaptcha-title">reCAPTCHA</div>
+              <div class="recaptcha-links">
+                <a href="https://www.google.com/intl/en/policies/privacy/" target="_blank">Privacy</a>
+                <span>-</span>
+                <a href="https://www.google.com/intl/en/policies/terms/" target="_blank">Terms</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Begin Button -->
+        <button class="btn-begin" (click)="startEnrollment()">
+          Begin
+        </button>
+      </div>
+
+      <!-- Right Content -->
+      <div class="right-content">
+        <h1 class="welcome-title">Welcome to the {{ program.displayName }} Enrollment Site</h1>
+        <div class="welcome-description" [innerHTML]="program.shortDescription"></div>
       </div>
     </div>
   </div>

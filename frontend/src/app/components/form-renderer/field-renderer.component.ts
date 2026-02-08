@@ -172,8 +172,8 @@ import { FieldDefinition, FieldConfig } from '../../models/form-schema.model';
     }
 
     .html-content {
-      padding: 16px 0;
-      line-height: 1.6;
+      padding: 8px 0;
+      line-height: 1.5;
     }
   `]
 })
