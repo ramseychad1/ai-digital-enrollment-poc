@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -228,6 +229,7 @@ public class ContentfulManagementService {
     /**
      * Update an existing enrollment program in Contentful
      */
+    @CacheEvict(value = "contentful-programs", allEntries = true)
     public void updateProgram(
         String programId,
         String displayName,
@@ -308,6 +310,7 @@ public class ContentfulManagementService {
     /**
      * Update an existing enrollment program with a new form schema
      */
+    @CacheEvict(value = "contentful-programs", allEntries = true)
     public void updateProgramWithSchema(
         String programId,
         String displayName,
@@ -398,6 +401,7 @@ public class ContentfulManagementService {
     /**
      * Delete an enrollment program and its associated form schema from Contentful
      */
+    @CacheEvict(value = "contentful-programs", allEntries = true)
     public void deleteProgram(String programId) {
         log.info("Deleting enrollment program and form schema from Contentful: {}", programId);
 
