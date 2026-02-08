@@ -25,6 +25,7 @@ public class IdpController {
 
     private final PdfProcessingService pdfProcessingService;
     private final ClaudeApiService claudeApiService;
+    private final GoogleAiService googleAiService;
     private final ScreenshotService screenshotService;
     private final ColorDetectionService colorDetectionService;
     private final LogoFetchService logoFetchService;
@@ -35,6 +36,7 @@ public class IdpController {
     public IdpController(
         PdfProcessingService pdfProcessingService,
         ClaudeApiService claudeApiService,
+        GoogleAiService googleAiService,
         ScreenshotService screenshotService,
         ColorDetectionService colorDetectionService,
         LogoFetchService logoFetchService,
@@ -44,6 +46,7 @@ public class IdpController {
     ) {
         this.pdfProcessingService = pdfProcessingService;
         this.claudeApiService = claudeApiService;
+        this.googleAiService = googleAiService;
         this.screenshotService = screenshotService;
         this.colorDetectionService = colorDetectionService;
         this.logoFetchService = logoFetchService;
@@ -56,8 +59,10 @@ public class IdpController {
      * Analyze PDF and generate JSON Schema
      */
     @PostMapping(value = "/analyze-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<JsonSchemaResponse> analyzePdf(@RequestParam("file") MultipartFile file) {
-        log.info("Received PDF for analysis: {}", file.getOriginalFilename());
+    public ResponseEntity<JsonSchemaResponse> analyzePdf(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "provider", defaultValue = "claude") String provider) {
+        log.info("Received PDF for analysis: {} with provider: {}", file.getOriginalFilename(), provider);
 
         try {
             // Validate file
@@ -74,15 +79,22 @@ public class IdpController {
             byte[] pdfBytes = file.getBytes();
             List<String> base64Images = pdfProcessingService.convertPdfToBase64Images(pdfBytes);
 
-            // Send to Claude API for analysis
-            String jsonSchema = claudeApiService.analyzePdfAndGenerateSchema(base64Images);
+            // Send to appropriate AI provider for analysis
+            String jsonSchema;
+            if ("google".equalsIgnoreCase(provider)) {
+                log.info("Using Google AI for PDF analysis");
+                jsonSchema = googleAiService.analyzePdfAndGenerateSchema(base64Images);
+            } else {
+                log.info("Using Claude AI for PDF analysis");
+                jsonSchema = claudeApiService.analyzePdfAndGenerateSchema(base64Images);
+            }
 
             // Build response
             JsonSchemaResponse response = new JsonSchemaResponse();
             response.setSchema(jsonSchema);
             response.setFormId(generateFormIdFromFilename(file.getOriginalFilename()));
             response.setConfidence(85); // Placeholder
-            response.setNotes("Schema generated successfully. Please review and adjust as needed.");
+            response.setNotes("Schema generated successfully using " + provider + " AI. Please review and adjust as needed.");
 
             return ResponseEntity.ok(response);
 

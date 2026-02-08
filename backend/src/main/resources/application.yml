@@ -84,6 +84,13 @@ claude:
   model: claude-sonnet-4-20250514
   max-tokens: 16384
 
+# Google AI Configuration
+google:
+  ai:
+    api-key: ${GOOGLE_AI_API_KEY}
+    api-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
+    model: gemini-2.0-flash
+
 # Security Configuration
 security:
   user:

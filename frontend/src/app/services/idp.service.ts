@@ -25,9 +25,10 @@ export class IdpService {
 
   constructor(private http: HttpClient) {}
 
-  analyzePdf(file: File): Observable<JsonSchemaResponse> {
+  analyzePdf(file: File, provider: string = 'claude'): Observable<JsonSchemaResponse> {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('provider', provider);
 
     return this.http.post<JsonSchemaResponse>(`${this.apiUrl}/analyze-pdf`, formData);
   }

@@ -223,6 +223,58 @@ export class FormBuilderComponent implements OnInit {
     });
   }
 
+  analyzePdfWithGoogle(): void {
+    if (!this.selectedFile) {
+      return;
+    }
+
+    this.isAnalyzing = true;
+    this.errorMessage = null;
+
+    this.idpService.analyzePdf(this.selectedFile, 'google').subscribe({
+      next: (response: JsonSchemaResponse) => {
+        this.generatedSchema = response.schema;
+        this.formId = response.formId;
+        this.analysisNotes = response.notes;
+        this.isAnalyzing = false;
+
+        // Pre-populate program config from schema title and description
+        this.extractSchemaMetadata();
+      },
+      error: (error) => {
+        console.error('Error analyzing PDF with Google AI', error);
+        this.errorMessage = 'Failed to analyze PDF with Google AI. Please try again.';
+        this.isAnalyzing = false;
+      }
+    });
+  }
+
+  analyzePdfWithClaude(): void {
+    if (!this.selectedFile) {
+      return;
+    }
+
+    this.isAnalyzing = true;
+    this.errorMessage = null;
+
+    this.idpService.analyzePdf(this.selectedFile, 'claude').subscribe({
+      next: (response: JsonSchemaResponse) => {
+        this.generatedSchema = response.schema;
+        this.formId = response.formId;
+        this.analysisNotes = response.notes;
+        this.isAnalyzing = false;
+
+        // Pre-populate program config from schema title and description
+        this.extractSchemaMetadata();
+      },
+      error: (error) => {
+        console.error('Error analyzing PDF with Claude AI', error);
+        this.errorMessage = 'Failed to analyze PDF with Claude AI. Please try again.';
+        this.isAnalyzing = false;
+      }
+    });
+  }
+
   /**
    * Extract title and description from the generated schema
    * and pre-populate the program config fields
