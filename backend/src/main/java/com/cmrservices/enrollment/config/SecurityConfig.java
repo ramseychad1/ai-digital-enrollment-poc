@@ -22,7 +22,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,32 +49,28 @@ public class SecurityConfig {
         log.info("Configuring Spring Security with session-based authentication");
 
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable()) // Disable CSRF for API endpoints
-            .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers("/auth/login", "/auth/logout", "/auth/status").permitAll()
-                .requestMatchers("/health", "/health/**").permitAll()
-                // All other endpoints require authentication
-                .anyRequest().authenticated()
-            )
-            .formLogin(form -> form
-                .loginProcessingUrl("/auth/login")
-                .successHandler(authenticationSuccessHandler())
-                .failureHandler(authenticationFailureHandler())
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/auth/logout")
-                .logoutSuccessHandler(logoutSuccessHandler())
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-                .permitAll()
-            )
-            .sessionManagement(session -> session
-                .maximumSessions(1)
-                .maxSessionsPreventsLogin(false)
-            );
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable()) // Disable CSRF for API endpoints
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers("/auth/login", "/auth/logout", "/auth/status").permitAll()
+                        .requestMatchers("/health", "/health/**").permitAll()
+                        // All other endpoints require authentication
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginProcessingUrl("/auth/login")
+                        .successHandler(authenticationSuccessHandler())
+                        .failureHandler(authenticationFailureHandler())
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/auth/logout")
+                        .logoutSuccessHandler(logoutSuccessHandler())
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll())
+                .sessionManagement(session -> session
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false));
 
         return http.build();
     }
@@ -106,10 +101,10 @@ public class SecurityConfig {
         log.info("Configuring in-memory authentication for user: {}", username);
 
         UserDetails user = User.builder()
-            .username(username)
-            .password(passwordEncoder().encode(password))
-            .roles("ADMIN")
-            .build();
+                .username(username)
+                .password(passwordEncoder().encode(password))
+                .roles("ADMIN")
+                .build();
 
         return new InMemoryUserDetailsManager(user);
     }
@@ -126,9 +121,8 @@ public class SecurityConfig {
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.getWriter().write(String.format(
-                "{\"success\":true,\"message\":\"Login successful\",\"username\":\"%s\"}",
-                authentication.getName()
-            ));
+                    "{\"success\":true,\"message\":\"Login successful\",\"username\":\"%s\"}",
+                    authentication.getName()));
         };
     }
 
@@ -139,8 +133,7 @@ public class SecurityConfig {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write(
-                "{\"success\":false,\"message\":\"Invalid username or password\"}"
-            );
+                    "{\"success\":false,\"message\":\"Invalid username or password\"}");
         };
     }
 

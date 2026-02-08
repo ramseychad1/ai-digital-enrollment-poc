@@ -34,16 +34,15 @@ public class IdpController {
     private final ObjectMapper objectMapper;
 
     public IdpController(
-        PdfProcessingService pdfProcessingService,
-        ClaudeApiService claudeApiService,
-        GoogleAiService googleAiService,
-        ScreenshotService screenshotService,
-        ColorDetectionService colorDetectionService,
-        LogoFetchService logoFetchService,
-        ContentfulManagementService contentfulManagementService,
-        ColorAnalysisService colorAnalysisService,
-        ObjectMapper objectMapper
-    ) {
+            PdfProcessingService pdfProcessingService,
+            ClaudeApiService claudeApiService,
+            GoogleAiService googleAiService,
+            ScreenshotService screenshotService,
+            ColorDetectionService colorDetectionService,
+            LogoFetchService logoFetchService,
+            ContentfulManagementService contentfulManagementService,
+            ColorAnalysisService colorAnalysisService,
+            ObjectMapper objectMapper) {
         this.pdfProcessingService = pdfProcessingService;
         this.claudeApiService = claudeApiService;
         this.googleAiService = googleAiService;
@@ -94,7 +93,8 @@ public class IdpController {
             response.setSchema(jsonSchema);
             response.setFormId(generateFormIdFromFilename(file.getOriginalFilename()));
             response.setConfidence(85); // Placeholder
-            response.setNotes("Schema generated successfully using " + provider + " AI. Please review and adjust as needed.");
+            response.setNotes(
+                    "Schema generated successfully using " + provider + " AI. Please review and adjust as needed.");
 
             return ResponseEntity.ok(response);
 
@@ -106,9 +106,9 @@ public class IdpController {
 
     private String generateFormIdFromFilename(String filename) {
         return filename
-            .toLowerCase()
-            .replaceAll("\\.pdf$", "")
-            .replaceAll("[^a-z0-9]+", "-");
+                .toLowerCase()
+                .replaceAll("\\.pdf$", "")
+                .replaceAll("[^a-z0-9]+", "-");
     }
 
     /**
@@ -133,7 +133,8 @@ public class IdpController {
             } else {
                 // Screenshot failed, return default colors without screenshot
                 log.info("Screenshot unavailable, returning default colors");
-                List<String> defaultColors = Arrays.asList("#E41F35", "#000000", "#FFFFFF", "#0066CC", "#FF6600", "#333333");
+                List<String> defaultColors = Arrays.asList("#E41F35", "#000000", "#FFFFFF", "#0066CC", "#FF6600",
+                        "#333333");
                 response.setColors(defaultColors);
                 response.setScreenshotBase64(null);
             }
@@ -171,7 +172,8 @@ public class IdpController {
 
     /**
      * Analyze website colors using AI (Claude Vision)
-     * Captures a screenshot of the website and uses Claude Vision to identify brand colors
+     * Captures a screenshot of the website and uses Claude Vision to identify brand
+     * colors
      */
     @PostMapping("/analyze-colors")
     public ResponseEntity<ColorAnalysisResponse> analyzeColors(@RequestBody ColorAnalysisRequest request) {
@@ -196,7 +198,8 @@ public class IdpController {
 
     /**
      * Analyze PDF colors using AI (Claude Vision)
-     * Accepts a PDF file and uses Claude Vision to identify brand colors from the document
+     * Accepts a PDF file and uses Claude Vision to identify brand colors from the
+     * document
      */
     @PostMapping(value = "/analyze-pdf-colors", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ColorAnalysisResponse> analyzePdfColors(@RequestParam("file") MultipartFile file) {
@@ -207,15 +210,13 @@ public class IdpController {
             if (file.isEmpty()) {
                 log.warn("Empty file received for PDF color analysis");
                 return ResponseEntity.badRequest().body(
-                    ColorAnalysisResponse.error("Please select a PDF file to analyze")
-                );
+                        ColorAnalysisResponse.error("Please select a PDF file to analyze"));
             }
 
             if (!"application/pdf".equals(file.getContentType())) {
                 log.warn("Invalid file type for PDF color analysis: {}", file.getContentType());
                 return ResponseEntity.badRequest().body(
-                    ColorAnalysisResponse.error("Please upload a valid PDF file")
-                );
+                        ColorAnalysisResponse.error("Please upload a valid PDF file"));
             }
 
             // Convert PDF to base64
@@ -231,8 +232,7 @@ public class IdpController {
         } catch (Exception e) {
             log.error("Error analyzing PDF colors", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                ColorAnalysisResponse.error("Failed to analyze PDF: " + e.getMessage())
-            );
+                    ColorAnalysisResponse.error("Failed to analyze PDF: " + e.getMessage()));
         }
     }
 
@@ -257,36 +257,35 @@ public class IdpController {
             // 1. Extract formId from the JSON schema itself (not PDF filename)
             String schemaFormId = extractFormIdFromSchema(config.getFormSchema());
 
-            // 2. Generate program ID from display name (must be different from schemaFormId)
+            // 2. Generate program ID from display name (must be different from
+            // schemaFormId)
             String programId = config.getDisplayName()
-                .toLowerCase()
-                .replaceAll("[^a-z0-9]+", "-");
+                    .toLowerCase()
+                    .replaceAll("[^a-z0-9]+", "-");
 
             // 3. Create form schema entry using the schema's internal formId
             String formSchemaId = contentfulManagementService.createFormSchema(
-                schemaFormId,
-                "1.0",
-                config.getFormSchema()
-            );
+                    schemaFormId,
+                    "1.0",
+                    config.getFormSchema());
 
             // 4. Create program entry
-            String programEntryId = contentfulManagementService.createProgram(
-                programId,
-                config.getDisplayName(),
-                config.getManufacturer(),
-                config.getShortDescription(),
-                config.getCompanyName(),
-                config.getFooterText(),
-                config.getPrimaryColor(),
-                config.getPrimaryButtonColor(),
-                config.getSecondaryColor(),
-                config.getSecondaryButtonColor(),
-                config.getHeaderBackgroundColor(),
-                config.getFooterBackgroundColor(),
-                config.getFormBackgroundColor(),
-                config.getLogoUrl(),
-                formSchemaId
-            );
+            contentfulManagementService.createProgram(
+                    programId,
+                    config.getDisplayName(),
+                    config.getManufacturer(),
+                    config.getShortDescription(),
+                    config.getCompanyName(),
+                    config.getFooterText(),
+                    config.getPrimaryColor(),
+                    config.getPrimaryButtonColor(),
+                    config.getSecondaryColor(),
+                    config.getSecondaryButtonColor(),
+                    config.getHeaderBackgroundColor(),
+                    config.getFooterBackgroundColor(),
+                    config.getFormBackgroundColor(),
+                    config.getLogoUrl(),
+                    formSchemaId);
 
             PublishResponse response = new PublishResponse();
             response.setSuccess(true);
@@ -313,9 +312,8 @@ public class IdpController {
      */
     @PutMapping("/update-program/{programId}")
     public ResponseEntity<PublishResponse> updateProgram(
-        @PathVariable String programId,
-        @RequestBody Map<String, String> updateData
-    ) {
+            @PathVariable String programId,
+            @RequestBody Map<String, String> updateData) {
         log.info("Updating program in Contentful: {}", programId);
 
         // Validate logo URL
@@ -330,21 +328,20 @@ public class IdpController {
 
         try {
             contentfulManagementService.updateProgram(
-                programId,
-                updateData.get("displayName"),
-                updateData.get("manufacturer"),
-                updateData.get("shortDescription"),
-                updateData.get("companyName"),
-                updateData.get("footerText"),
-                updateData.get("primaryColor"),
-                updateData.get("primaryButtonColor"),
-                updateData.get("secondaryColor"),
-                updateData.get("secondaryButtonColor"),
-                updateData.get("headerBackgroundColor"),
-                updateData.get("footerBackgroundColor"),
-                updateData.get("formBackgroundColor"),
-                updateData.get("logoUrl")
-            );
+                    programId,
+                    updateData.get("displayName"),
+                    updateData.get("manufacturer"),
+                    updateData.get("shortDescription"),
+                    updateData.get("companyName"),
+                    updateData.get("footerText"),
+                    updateData.get("primaryColor"),
+                    updateData.get("primaryButtonColor"),
+                    updateData.get("secondaryColor"),
+                    updateData.get("secondaryButtonColor"),
+                    updateData.get("headerBackgroundColor"),
+                    updateData.get("footerBackgroundColor"),
+                    updateData.get("formBackgroundColor"),
+                    updateData.get("logoUrl"));
 
             PublishResponse response = new PublishResponse();
             response.setSuccess(true);
@@ -370,9 +367,8 @@ public class IdpController {
      */
     @PutMapping("/update-program-with-schema/{programId}")
     public ResponseEntity<PublishResponse> updateProgramWithSchema(
-        @PathVariable String programId,
-        @RequestBody ProgramConfigRequest config
-    ) {
+            @PathVariable String programId,
+            @RequestBody ProgramConfigRequest config) {
         log.info("Updating program {} with new schema", programId);
 
         // Validate logo URL
@@ -391,29 +387,27 @@ public class IdpController {
 
             // 2. Create new form schema entry
             String formSchemaId = contentfulManagementService.createFormSchema(
-                schemaFormId,
-                "1.0",
-                config.getFormSchema()
-            );
+                    schemaFormId,
+                    "1.0",
+                    config.getFormSchema());
 
             // 3. Update the program with the new form schema reference
             contentfulManagementService.updateProgramWithSchema(
-                programId,
-                config.getDisplayName(),
-                config.getManufacturer(),
-                config.getShortDescription(),
-                config.getCompanyName(),
-                config.getFooterText(),
-                config.getPrimaryColor(),
-                config.getPrimaryButtonColor(),
-                config.getSecondaryColor(),
-                config.getSecondaryButtonColor(),
-                config.getHeaderBackgroundColor(),
-                config.getFooterBackgroundColor(),
-                config.getFormBackgroundColor(),
-                config.getLogoUrl(),
-                formSchemaId
-            );
+                    programId,
+                    config.getDisplayName(),
+                    config.getManufacturer(),
+                    config.getShortDescription(),
+                    config.getCompanyName(),
+                    config.getFooterText(),
+                    config.getPrimaryColor(),
+                    config.getPrimaryButtonColor(),
+                    config.getSecondaryColor(),
+                    config.getSecondaryButtonColor(),
+                    config.getHeaderBackgroundColor(),
+                    config.getFooterBackgroundColor(),
+                    config.getFormBackgroundColor(),
+                    config.getLogoUrl(),
+                    formSchemaId);
 
             PublishResponse response = new PublishResponse();
             response.setSuccess(true);

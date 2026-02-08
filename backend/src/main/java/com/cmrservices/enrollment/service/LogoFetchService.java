@@ -82,11 +82,15 @@ public class LogoFetchService {
 
     private boolean testUrl(String url) {
         try {
+            if (url == null) {
+                return false;
+            }
+
             webClient.head()
-                .uri(url)
-                .retrieve()
-                .toBodilessEntity()
-                .block();
+                    .uri(url)
+                    .retrieve()
+                    .toBodilessEntity()
+                    .block();
             return true;
         } catch (Exception e) {
             return false;

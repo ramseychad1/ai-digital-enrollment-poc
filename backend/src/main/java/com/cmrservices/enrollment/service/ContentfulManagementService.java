@@ -41,16 +41,16 @@ public class ContentfulManagementService {
 
     private CMAClient getClient() {
         return new CMAClient.Builder()
-            .setAccessToken(managementToken)
-            .build();
+                .setAccessToken(managementToken)
+                .build();
     }
 
     private CDAClient getDeliveryClient() {
         return CDAClient.builder()
-            .setSpace(spaceId)
-            .setToken(accessToken)
-            .setEnvironment(environment)
-            .build();
+                .setSpace(spaceId)
+                .setToken(accessToken)
+                .setEnvironment(environment)
+                .build();
     }
 
     /**
@@ -69,9 +69,9 @@ public class ContentfulManagementService {
             } catch (com.fasterxml.jackson.core.JsonParseException e) {
                 // Log details about the JSON parsing error
                 log.error("Invalid JSON in schema - Parse error at line {}, column {}: {}",
-                    e.getLocation().getLineNr(),
-                    e.getLocation().getColumnNr(),
-                    e.getOriginalMessage());
+                        e.getLocation().getLineNr(),
+                        e.getLocation().getColumnNr(),
+                        e.getOriginalMessage());
 
                 // Try to show the problematic area
                 String[] lines = schemaJson.split("\n");
@@ -87,11 +87,12 @@ public class ContentfulManagementService {
                 }
 
                 throw new RuntimeException("Invalid JSON schema - syntax error at line " + errorLine +
-                    ": " + e.getOriginalMessage() +
-                    ". Please check the generated JSON in the Review Schema step and fix any syntax errors.", e);
+                        ": " + e.getOriginalMessage() +
+                        ". Please check the generated JSON in the Review Schema step and fix any syntax errors.", e);
             }
 
-            // Try to create with original formId, if it fails due to uniqueness, append timestamp
+            // Try to create with original formId, if it fails due to uniqueness, append
+            // timestamp
             String uniqueFormId = formId;
             int maxAttempts = 5;
             CMAEntry published = null;
@@ -100,9 +101,9 @@ public class ContentfulManagementService {
                 try {
                     // Create entry with fields
                     CMAEntry entry = new CMAEntry()
-                        .setField("formId", "en-US", uniqueFormId)
-                        .setField("version", "en-US", version)
-                        .setField("schema", "en-US", schemaObject);
+                            .setField("formId", "en-US", uniqueFormId)
+                            .setField("version", "en-US", version)
+                            .setField("schema", "en-US", schemaObject);
 
                     // Try to create in Contentful
                     CMAEntry created = client.entries().create(spaceId, environment, "enrollmentFormSchema", entry);
@@ -114,7 +115,8 @@ public class ContentfulManagementService {
                     break; // Success, exit loop
 
                 } catch (CMAHttpException e) {
-                    // If 422 error (validation failed - likely unique constraint), append timestamp and retry
+                    // If 422 error (validation failed - likely unique constraint), append timestamp
+                    // and retry
                     if (e.toString().contains("422")) {
                         long timestamp = System.currentTimeMillis();
                         uniqueFormId = formId + "-" + timestamp;
@@ -130,7 +132,8 @@ public class ContentfulManagementService {
             }
 
             if (published == null) {
-                throw new RuntimeException("Failed to create and publish form schema after " + maxAttempts + " attempts");
+                throw new RuntimeException(
+                        "Failed to create and publish form schema after " + maxAttempts + " attempts");
             }
 
             return published.getId();
@@ -154,22 +157,21 @@ public class ContentfulManagementService {
      * Create and publish Enrollment Program entry
      */
     public String createProgram(
-        String programId,
-        String displayName,
-        String manufacturer,
-        String shortDescription,
-        String companyName,
-        String footerText,
-        String primaryColor,
-        String primaryButtonColor,
-        String secondaryColor,
-        String secondaryButtonColor,
-        String headerBackgroundColor,
-        String footerBackgroundColor,
-        String formBackgroundColor,
-        String logoUrl,
-        String formSchemaEntryId
-    ) {
+            String programId,
+            String displayName,
+            String manufacturer,
+            String shortDescription,
+            String companyName,
+            String footerText,
+            String primaryColor,
+            String primaryButtonColor,
+            String secondaryColor,
+            String secondaryButtonColor,
+            String headerBackgroundColor,
+            String footerBackgroundColor,
+            String formBackgroundColor,
+            String logoUrl,
+            String formSchemaEntryId) {
         log.info("Creating enrollment program in Contentful: {}", programId);
 
         try {
@@ -178,29 +180,29 @@ public class ContentfulManagementService {
             // Create reference to form schema
             Map<String, Object> formSchemaLink = new HashMap<>();
             formSchemaLink.put("sys", Map.of(
-                "type", "Link",
-                "linkType", "Entry",
-                "id", formSchemaEntryId
-            ));
+                    "type", "Link",
+                    "linkType", "Entry",
+                    "id", formSchemaEntryId));
 
             // Create entry with fields
             CMAEntry entry = new CMAEntry()
-                .setField("programId", "en-US", programId)
-                .setField("displayName", "en-US", displayName)
-                .setField("manufacturer", "en-US", manufacturer)
-                .setField("shortDescription", "en-US", shortDescription)
-                .setField("companyName", "en-US", companyName)
-                .setField("footerText", "en-US", footerText != null ? footerText : "")
-                .setField("primaryColor", "en-US", primaryColor)
-                .setField("primaryButtonColor", "en-US", primaryButtonColor)
-                .setField("secondaryColor", "en-US", secondaryColor)
-                .setField("secondaryButtonColor", "en-US", secondaryButtonColor)
-                .setField("headerBackgroundColor", "en-US", headerBackgroundColor)
-                .setField("footerBackgroundColor", "en-US", footerBackgroundColor)
-                .setField("formBackgroundColor", "en-US", formBackgroundColor != null ? formBackgroundColor : "#FFFFFF")
-                .setField("logoUrl", "en-US", logoUrl)
-                .setField("isActive", "en-US", true)
-                .setField("formSchema", "en-US", formSchemaLink);
+                    .setField("programId", "en-US", programId)
+                    .setField("displayName", "en-US", displayName)
+                    .setField("manufacturer", "en-US", manufacturer)
+                    .setField("shortDescription", "en-US", shortDescription)
+                    .setField("companyName", "en-US", companyName)
+                    .setField("footerText", "en-US", footerText != null ? footerText : "")
+                    .setField("primaryColor", "en-US", primaryColor)
+                    .setField("primaryButtonColor", "en-US", primaryButtonColor)
+                    .setField("secondaryColor", "en-US", secondaryColor)
+                    .setField("secondaryButtonColor", "en-US", secondaryButtonColor)
+                    .setField("headerBackgroundColor", "en-US", headerBackgroundColor)
+                    .setField("footerBackgroundColor", "en-US", footerBackgroundColor)
+                    .setField("formBackgroundColor", "en-US",
+                            formBackgroundColor != null ? formBackgroundColor : "#FFFFFF")
+                    .setField("logoUrl", "en-US", logoUrl)
+                    .setField("isActive", "en-US", true)
+                    .setField("formSchema", "en-US", formSchemaLink);
 
             // Create in Contentful with content type
             CMAEntry created = client.entries().create(spaceId, environment, "enrollmentProgram", entry);
@@ -231,21 +233,20 @@ public class ContentfulManagementService {
      */
     @CacheEvict(value = "contentful-programs", allEntries = true)
     public void updateProgram(
-        String programId,
-        String displayName,
-        String manufacturer,
-        String shortDescription,
-        String companyName,
-        String footerText,
-        String primaryColor,
-        String primaryButtonColor,
-        String secondaryColor,
-        String secondaryButtonColor,
-        String headerBackgroundColor,
-        String footerBackgroundColor,
-        String formBackgroundColor,
-        String logoUrl
-    ) {
+            String programId,
+            String displayName,
+            String manufacturer,
+            String shortDescription,
+            String companyName,
+            String footerText,
+            String primaryColor,
+            String primaryButtonColor,
+            String secondaryColor,
+            String secondaryButtonColor,
+            String headerBackgroundColor,
+            String footerBackgroundColor,
+            String formBackgroundColor,
+            String logoUrl) {
         log.info("Updating enrollment program in Contentful: {}", programId);
 
         try {
@@ -275,7 +276,8 @@ public class ContentfulManagementService {
             entry.setField("secondaryButtonColor", "en-US", secondaryButtonColor);
             entry.setField("headerBackgroundColor", "en-US", headerBackgroundColor);
             entry.setField("footerBackgroundColor", "en-US", footerBackgroundColor);
-            entry.setField("formBackgroundColor", "en-US", formBackgroundColor != null ? formBackgroundColor : "#FFFFFF");
+            entry.setField("formBackgroundColor", "en-US",
+                    formBackgroundColor != null ? formBackgroundColor : "#FFFFFF");
             if (logoUrl != null && !logoUrl.isEmpty()) {
                 entry.setField("logoUrl", "en-US", logoUrl);
             }
@@ -312,22 +314,21 @@ public class ContentfulManagementService {
      */
     @CacheEvict(value = "contentful-programs", allEntries = true)
     public void updateProgramWithSchema(
-        String programId,
-        String displayName,
-        String manufacturer,
-        String shortDescription,
-        String companyName,
-        String footerText,
-        String primaryColor,
-        String primaryButtonColor,
-        String secondaryColor,
-        String secondaryButtonColor,
-        String headerBackgroundColor,
-        String footerBackgroundColor,
-        String formBackgroundColor,
-        String logoUrl,
-        String formSchemaEntryId
-    ) {
+            String programId,
+            String displayName,
+            String manufacturer,
+            String shortDescription,
+            String companyName,
+            String footerText,
+            String primaryColor,
+            String primaryButtonColor,
+            String secondaryColor,
+            String secondaryButtonColor,
+            String headerBackgroundColor,
+            String footerBackgroundColor,
+            String formBackgroundColor,
+            String logoUrl,
+            String formSchemaEntryId) {
         log.info("Updating enrollment program with new schema in Contentful: {}", programId);
 
         try {
@@ -346,10 +347,9 @@ public class ContentfulManagementService {
             // Create reference to the new form schema
             Map<String, Object> formSchemaLink = new HashMap<>();
             formSchemaLink.put("sys", Map.of(
-                "type", "Link",
-                "linkType", "Entry",
-                "id", formSchemaEntryId
-            ));
+                    "type", "Link",
+                    "linkType", "Entry",
+                    "id", formSchemaEntryId));
 
             // Update the fields directly on the existing entry
             entry.setField("displayName", "en-US", displayName);
@@ -365,7 +365,8 @@ public class ContentfulManagementService {
             entry.setField("secondaryButtonColor", "en-US", secondaryButtonColor);
             entry.setField("headerBackgroundColor", "en-US", headerBackgroundColor);
             entry.setField("footerBackgroundColor", "en-US", footerBackgroundColor);
-            entry.setField("formBackgroundColor", "en-US", formBackgroundColor != null ? formBackgroundColor : "#FFFFFF");
+            entry.setField("formBackgroundColor", "en-US",
+                    formBackgroundColor != null ? formBackgroundColor : "#FFFFFF");
             if (logoUrl != null && !logoUrl.isEmpty()) {
                 entry.setField("logoUrl", "en-US", logoUrl);
             }
@@ -391,7 +392,8 @@ public class ContentfulManagementService {
             if (e.getCause() != null) {
                 log.error("Cause: {}", e.getCause().getMessage());
             }
-            throw new RuntimeException("Failed to update enrollment program with schema in Contentful: " + e.getMessage(), e);
+            throw new RuntimeException(
+                    "Failed to update enrollment program with schema in Contentful: " + e.getMessage(), e);
         } catch (Exception e) {
             log.error("Error updating enrollment program with schema in Contentful", e);
             throw new RuntimeException("Failed to update enrollment program with schema in Contentful", e);
@@ -421,7 +423,6 @@ public class ContentfulManagementService {
             // Extract form schema entry ID from the program's formSchema field
             String formSchemaEntryId = null;
             try {
-                @SuppressWarnings("unchecked")
                 Map<String, Object> formSchemaField = (Map<String, Object>) programEntry.getFields().get("formSchema");
                 if (formSchemaField != null) {
                     @SuppressWarnings("unchecked")
@@ -439,7 +440,8 @@ public class ContentfulManagementService {
                 log.warn("Could not extract form schema ID from program entry: {}", e.getMessage());
             }
 
-            // 1. Unpublish and delete the program entry first (it references the form schema)
+            // 1. Unpublish and delete the program entry first (it references the form
+            // schema)
             try {
                 client.entries().unPublish(programEntry);
                 log.info("Program entry unpublished: {}", programEntryId);
@@ -456,14 +458,16 @@ public class ContentfulManagementService {
             if (formSchemaEntryId != null) {
                 try {
                     CMAEntry formSchemaEntry = client.entries().fetchOne(spaceId, environment, formSchemaEntryId);
-                    log.info("Fetched form schema entry {} with version {}", formSchemaEntryId, formSchemaEntry.getVersion());
+                    log.info("Fetched form schema entry {} with version {}", formSchemaEntryId,
+                            formSchemaEntry.getVersion());
 
                     // Unpublish the form schema
                     try {
                         client.entries().unPublish(formSchemaEntry);
                         log.info("Form schema entry unpublished: {}", formSchemaEntryId);
                     } catch (CMAHttpException e) {
-                        log.warn("Could not unpublish form schema entry (may already be unpublished): {}", e.getMessage());
+                        log.warn("Could not unpublish form schema entry (may already be unpublished): {}",
+                                e.getMessage());
                     }
 
                     // Fetch again and delete
@@ -506,9 +510,9 @@ public class ContentfulManagementService {
             CDAClient deliveryClient = getDeliveryClient();
 
             CDAArray result = deliveryClient.fetch(CDAEntry.class)
-                .withContentType("enrollmentProgram")
-                .where("fields.programId", programId)
-                .all();
+                    .withContentType("enrollmentProgram")
+                    .where("fields.programId", programId)
+                    .all();
 
             if (result.items().isEmpty()) {
                 log.warn("No entry found for programId: {}", programId);

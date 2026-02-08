@@ -84,6 +84,10 @@ public class SubmissionService {
     public Optional<SubmissionDTO> getSubmissionById(UUID id) {
         log.debug("Fetching submission with ID: {}", id);
 
+        if (id == null) {
+            return Optional.empty();
+        }
+
         return submissionRepository.findById(id)
                 .map(this::mapToDTO);
     }

@@ -126,15 +126,19 @@ public class ClaudeApiService {
         log.info("Calling Claude API (attempt {}/{})", attempt, maxRetries);
 
         String response = webClient.post()
-            .uri(apiUrl)
+            .uri(java.util.Objects.requireNonNull(apiUrl, "API URL must not be null"))
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .header("x-api-key", apiKey)
             .header("anthropic-version", "2023-06-01")
-            .bodyValue(requestBody)
+            .bodyValue(java.util.Objects.requireNonNull(requestBody, "Request body must not be null"))
             .retrieve()
             .bodyToMono(String.class)
             .timeout(java.time.Duration.ofMinutes(5)) // 5 minute timeout
             .block();
+
+        if (response == null) {
+          throw new RuntimeException("Received null response from Claude API");
+        }
 
         log.info("Successfully received response from Claude API");
         return response;

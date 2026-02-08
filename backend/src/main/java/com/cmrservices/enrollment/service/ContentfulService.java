@@ -129,7 +129,8 @@ public class ContentfulService {
 
     /**
      * Maps a Contentful entry to a ProgramDTO.
-     * Handles type casting issues (Contentful may return Double instead of Integer).
+     * Handles type casting issues (Contentful may return Double instead of
+     * Integer).
      *
      * @param entry the Contentful entry
      * @return mapped ProgramDTO
@@ -205,7 +206,7 @@ public class ContentfulService {
     /**
      * Safely extracts a string field from a Contentful entry.
      *
-     * @param entry the Contentful entry
+     * @param entry     the Contentful entry
      * @param fieldName the field name
      * @return the field value or null if not found
      */
@@ -217,7 +218,7 @@ public class ContentfulService {
     /**
      * Safely extracts a boolean field from a Contentful entry.
      *
-     * @param entry the Contentful entry
+     * @param entry     the Contentful entry
      * @param fieldName the field name
      * @return the field value or null if not found
      */
@@ -229,19 +230,4 @@ public class ContentfulService {
         return null;
     }
 
-    /**
-     * Safely extracts an integer field from a Contentful entry.
-     * Handles Contentful's type casting issue where numbers may be returned as Double.
-     *
-     * @param entry the Contentful entry
-     * @param fieldName the field name
-     * @return the field value or null if not found
-     */
-    private Integer getIntegerField(CDAEntry entry, String fieldName) {
-        Object value = entry.getField(fieldName);
-        if (value instanceof Number) {
-            return ((Number) value).intValue();
-        }
-        return null;
-    }
 }

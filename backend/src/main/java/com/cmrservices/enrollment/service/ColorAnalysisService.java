@@ -19,7 +19,8 @@ import java.util.Map;
 
 /**
  * Service for analyzing colors from websites and PDFs using Claude Vision.
- * Uses visual analysis to accurately identify brand colors from screenshots and documents.
+ * Uses visual analysis to accurately identify brand colors from screenshots and
+ * documents.
  */
 @Service
 public class ColorAnalysisService {
@@ -60,8 +61,7 @@ public class ColorAnalysisService {
             if (!screenshotService.isReady()) {
                 log.error("Screenshot service not ready");
                 return ColorAnalysisResponse.error(
-                    "Screenshot service is not available. Please try using the 'Analyze PDF' feature instead."
-                );
+                        "Screenshot service is not available. Please try using the 'Analyze PDF' feature instead.");
             }
 
             // Capture screenshot
@@ -70,9 +70,8 @@ public class ColorAnalysisService {
             if (screenshotBase64 == null || screenshotBase64.isEmpty()) {
                 log.warn("Failed to capture screenshot for {}", websiteUrl);
                 return ColorAnalysisResponse.blocked(
-                    "Unable to capture screenshot of the website. The site may be blocking automated access. " +
-                    "Please try using the 'Analyze PDF' feature to extract colors from a PDF document instead."
-                );
+                        "Unable to capture screenshot of the website. The site may be blocking automated access. " +
+                                "Please try using the 'Analyze PDF' feature to extract colors from a PDF document instead.");
             }
 
             // Analyze screenshot with Claude Vision
@@ -81,14 +80,14 @@ public class ColorAnalysisService {
         } catch (Exception e) {
             log.error("Error analyzing website colors: {}", e.getMessage(), e);
             return ColorAnalysisResponse.error(
-                "An error occurred while analyzing the website: " + e.getMessage() + ". " +
-                "Please try using the 'Analyze PDF' feature instead."
-            );
+                    "An error occurred while analyzing the website: " + e.getMessage() + ". " +
+                            "Please try using the 'Analyze PDF' feature instead.");
         }
     }
 
     /**
      * Analyze a PDF document using Claude Vision to identify brand colors.
+     * 
      * @param pdfBase64 Base64 encoded PDF content
      * @return ColorAnalysisResponse with extracted colors
      */
@@ -106,15 +105,15 @@ public class ColorAnalysisService {
         } catch (Exception e) {
             log.error("Error analyzing PDF colors: {}", e.getMessage(), e);
             return ColorAnalysisResponse.error(
-                "An error occurred while analyzing the PDF: " + e.getMessage()
-            );
+                    "An error occurred while analyzing the PDF: " + e.getMessage());
         }
     }
 
     /**
      * Analyze an image (screenshot) with Claude Vision API
      */
-    private ColorAnalysisResponse analyzeImageWithVision(String imageBase64, String mediaType, String sourceDescription) {
+    private ColorAnalysisResponse analyzeImageWithVision(String imageBase64, String mediaType,
+            String sourceDescription) {
         log.info("Analyzing {} with Claude Vision", sourceDescription);
 
         try {
@@ -138,7 +137,8 @@ public class ColorAnalysisService {
     /**
      * Analyze a PDF document with Claude Vision API
      */
-    private ColorAnalysisResponse analyzeDocumentWithVision(String documentBase64, String mediaType, String sourceDescription) {
+    private ColorAnalysisResponse analyzeDocumentWithVision(String documentBase64, String mediaType,
+            String sourceDescription) {
         log.info("Analyzing {} with Claude Vision", sourceDescription);
 
         try {
@@ -164,33 +164,34 @@ public class ColorAnalysisService {
      */
     private String buildVisionPrompt(String sourceDescription) {
         return """
-            You are analyzing a %s from a pharmaceutical company to extract brand colors for a patient enrollment form.
+                You are analyzing a %s from a pharmaceutical company to extract brand colors for a patient enrollment form.
 
-            Please carefully examine the visual content and identify the following colors:
+                Please carefully examine the visual content and identify the following colors:
 
-            1. **Primary Button Color** - The main call-to-action button color (often green, blue, or a brand accent color)
-            2. **Header Background Color** - The color used in the header/navigation bar
-            3. **Footer Background Color** - The color used in the footer area (often matches header or is darker)
-            4. **Accent/Highlight Color** - Used for links, highlights, and decorative elements
-            5. **Secondary Button Color** - Less prominent buttons, often gray or muted
-            6. **Sidebar/Navigation Color** - Background color for sidebars or secondary navigation
+                1. **Primary Button Color** - The main call-to-action button color (often green, blue, or a brand accent color)
+                2. **Header Background Color** - The color used in the header/navigation bar
+                3. **Footer Background Color** - The color used in the footer area (often matches header or is darker)
+                4. **Accent/Highlight Color** - Used for links, highlights, and decorative elements
+                5. **Secondary Button Color** - Less prominent buttons, often gray or muted
+                6. **Sidebar/Navigation Color** - Background color for sidebars or secondary navigation
 
-            IMPORTANT:
-            - Extract the ACTUAL colors you see in the image, not generic defaults
-            - Look for prominent brand colors, buttons, headers, and UI elements
-            - Pay special attention to CTA buttons - they often use the primary brand color
-            - Ensure colors provide good contrast for accessibility
+                IMPORTANT:
+                - Extract the ACTUAL colors you see in the image, not generic defaults
+                - Look for prominent brand colors, buttons, headers, and UI elements
+                - Pay special attention to CTA buttons - they often use the primary brand color
+                - Ensure colors provide good contrast for accessibility
 
-            Return ONLY a valid JSON object with hex color values, no additional text:
-            {
-              "primaryButton": "#RRGGBB",
-              "header": "#RRGGBB",
-              "footer": "#RRGGBB",
-              "accent": "#RRGGBB",
-              "secondaryButton": "#RRGGBB",
-              "sidebar": "#RRGGBB"
-            }
-            """.formatted(sourceDescription);
+                Return ONLY a valid JSON object with hex color values, no additional text:
+                {
+                  "primaryButton": "#RRGGBB",
+                  "header": "#RRGGBB",
+                  "footer": "#RRGGBB",
+                  "accent": "#RRGGBB",
+                  "secondaryButton": "#RRGGBB",
+                  "sidebar": "#RRGGBB"
+                }
+                """
+                .formatted(sourceDescription);
     }
 
     /**
@@ -278,15 +279,19 @@ public class ColorAnalysisService {
         log.info("Calling Claude Vision API");
 
         String response = webClient.post()
-            .uri(apiUrl)
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .header("x-api-key", apiKey)
-            .header("anthropic-version", "2023-06-01")
-            .bodyValue(requestBody)
-            .retrieve()
-            .bodyToMono(String.class)
-            .timeout(Duration.ofSeconds(90))  // Longer timeout for vision
-            .block();
+                .uri(java.util.Objects.requireNonNull(apiUrl, "API URL must not be null"))
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .header("x-api-key", apiKey)
+                .header("anthropic-version", "2023-06-01")
+                .bodyValue(java.util.Objects.requireNonNull(requestBody, "Request body must not be null"))
+                .retrieve()
+                .bodyToMono(String.class)
+                .timeout(Duration.ofSeconds(90)) // Longer timeout for vision
+                .block();
+
+        if (response == null) {
+            throw new RuntimeException("Received null response from Claude Vision API");
+        }
 
         log.info("Received response from Claude Vision API");
         return response;
@@ -301,10 +306,10 @@ public class ColorAnalysisService {
         try {
             JsonNode responseNode = objectMapper.readTree(response);
             String content = responseNode
-                .path("content")
-                .get(0)
-                .path("text")
-                .asText();
+                    .path("content")
+                    .get(0)
+                    .path("text")
+                    .asText();
 
             log.debug("Claude Vision raw response: {}", content);
 
@@ -322,7 +327,7 @@ public class ColorAnalysisService {
             JsonNode colorsNode = objectMapper.readTree(jsonContent);
 
             // Extract colors in order
-            String[] keys = {"primaryButton", "header", "footer", "accent", "secondaryButton", "sidebar"};
+            String[] keys = { "primaryButton", "header", "footer", "accent", "secondaryButton", "sidebar" };
             for (String key : keys) {
                 if (colorsNode.has(key)) {
                     String color = colorsNode.get(key).asText();
@@ -341,9 +346,8 @@ public class ColorAnalysisService {
             } else {
                 log.warn("Claude Vision returned insufficient colors ({})", colors.size());
                 return ColorAnalysisResponse.error(
-                    "Unable to determine all brand colors from the visual content. " +
-                    "Please manually select colors or try a different source."
-                );
+                        "Unable to determine all brand colors from the visual content. " +
+                                "Please manually select colors or try a different source.");
             }
 
         } catch (Exception e) {
